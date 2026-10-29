@@ -27,12 +27,18 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.network.PacketDistributor;
+import yalter.mousetweaks.api.MouseTweaksDisableWheelTweak;
 
 /**
  * Gearscope screen: placeholder panels instead of a background texture (added in Phase 4), simple frames
  * around every visible slot, the real player figure, and the Accessories slots (body places, sidebars,
  * group tabs, cosmetic toggle). Visibility of accessory slots is decided here, on the client only.
+ * <p>
+ * {@link MouseTweaksDisableWheelTweak}: Mouse Tweaks' wheel tweak does not get along with Accessories slots,
+ * so it is switched off here (dragging tweaks stay on). The annotation type is compile-only; without Mouse
+ * Tweaks the JVM simply ignores it when the class is loaded or reflected on.
  */
+@MouseTweaksDisableWheelTweak
 public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     private static final ResourceLocation COSMETIC_ICON =
             ResourceLocation.fromNamespaceAndPath("accessories", "textures/gui/theme/cosmetic_rainbow_icon.png");
@@ -101,6 +107,11 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     public void removed() {
         super.removed();
         GuiScaleOverride.restore(this.minecraft);
+    }
+
+    /** The layout this screen and its menu's slot positions were built with. */
+    public GearscopeLayout layout() {
+        return this.layout;
     }
 
     // --- Accessory slot visibility ---

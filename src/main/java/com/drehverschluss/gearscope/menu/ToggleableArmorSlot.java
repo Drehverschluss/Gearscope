@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.ArmorSlot;
  * Vanilla armor slot whose visibility the client screen can switch off (while cosmetic armor is shown at
  * the same position). The server never changes it, so it stays active there.
  */
-class ToggleableArmorSlot extends ArmorSlot implements ToggleableSlot {
+public class ToggleableArmorSlot extends ArmorSlot implements ToggleableSlot {
     private BooleanSupplier visibility = () -> true;
 
     ToggleableArmorSlot(Container container, LivingEntity owner, EquipmentSlot slot, int slotIndex, int x, int y,

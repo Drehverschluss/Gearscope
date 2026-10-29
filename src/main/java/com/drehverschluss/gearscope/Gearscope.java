@@ -1,6 +1,7 @@
 package com.drehverschluss.gearscope;
 
 import com.drehverschluss.gearscope.compat.accessories.AccessoriesCompat;
+import com.drehverschluss.gearscope.compat.inventorysorter.InventorySorterCompat;
 import com.drehverschluss.gearscope.menu.GearscopeMenuOpener;
 import com.drehverschluss.gearscope.menu.GearscopeMenuTypes;
 import com.drehverschluss.gearscope.network.GearscopeNetworking;
@@ -26,6 +27,9 @@ public class Gearscope {
         // Accessories is optional; its classes are only touched when it is installed.
         if (ModList.get().isLoaded(AccessoriesCompat.MOD_ID)) {
             AccessoriesCompat.init();
+        }
+        if (ModList.get().isLoaded(InventorySorterCompat.MOD_ID)) {
+            InventorySorterCompat.init(modEventBus);
         }
     }
 

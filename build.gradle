@@ -47,6 +47,14 @@ repositories {
             includeGroup 'org.sinytra.forgified-fabric-api'
         }
     }
+    // JEI API (compile only)
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+        content {
+            includeGroup 'mezz.jei'
+        }
+    }
 }
 
 base {
@@ -170,6 +178,17 @@ dependencies {
     }
     // Optional Apothic Attributes integration (attribute tooltip): compiled against only.
     compileOnly "maven.modrinth:apothic-attributes:${apothic_attributes_version}"
+    // Phase 5 compatibility, all optional and compiled against only:
+    // Mouse Tweaks (annotation that disables its wheel tweak on the Gearscope screen)
+    compileOnly "maven.modrinth:mouse-tweaks:${mouse_tweaks_version}"
+    // Polymorph (client recipe selection button)
+    compileOnly "maven.modrinth:polymorph:${polymorph_version}"
+    // JEI plugin
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    // Sophisticated Backpacks (open payload, backpack item); Core holds the item's superclasses
+    compileOnly "maven.modrinth:sophisticated-backpacks:${sophisticated_backpacks_version}"
+    compileOnly "maven.modrinth:sophisticated-core:${sophisticated_core_version}"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

@@ -128,6 +128,10 @@ public final class LayoutLoader extends SimplePreparableReloadListener<Gearscope
             readInt(cosmetic, "cosmetic_button", "x", v -> b.cosmeticButtonX = v, 0);
             readInt(cosmetic, "cosmetic_button", "y", v -> b.cosmeticButtonY = v, 0);
             readInt(cosmetic, "cosmetic_button", "size", v -> b.cosmeticButtonSize = v, 1);
+            JsonObject recipeButton = this.section("recipe_button");
+            readInt(recipeButton, "recipe_button", "x", v -> b.recipeButtonX = v, 0);
+            readInt(recipeButton, "recipe_button", "y", v -> b.recipeButtonY = v, 0);
+            readInt(recipeButton, "recipe_button", "size", v -> b.recipeButtonSize = v, 1);
 
             JsonObject player = this.section("player");
             readInt(player, "player", "center_x", v -> b.playerCenterX = v, 0);

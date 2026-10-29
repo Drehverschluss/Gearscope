@@ -7,7 +7,6 @@ import com.drehverschluss.gearscope.core.AccessorySlotSource;
 import com.drehverschluss.gearscope.core.AccessorySlotSpec;
 import com.drehverschluss.gearscope.core.GearscopeLayout;
 import com.drehverschluss.gearscope.core.GearscopeServices;
-import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +23,6 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.ResultContainer;
-import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -101,11 +99,11 @@ public class GearscopeMenu extends AbstractContainerMenu {
         GearscopeLayout layout = GearscopeLayout.current();
 
         // a) Crafting result + 2x2 grid.
-        this.addSlot(new ResultSlot(this.player, this.craftSlots, this.resultSlots, 0,
+        this.addSlot(new GearscopeResultSlot(this.player, this.craftSlots, this.resultSlots, 0,
                 layout.resultX, layout.resultY));
         for (int row = 0; row < 2; row++) {
             for (int col = 0; col < 2; col++) {
-                this.addSlot(new Slot(this.craftSlots, col + row * 2,
+                this.addSlot(new GearscopeCraftingSlot(this.craftSlots, col + row * 2,
                         layout.craftX[col], layout.craftY[row]));
             }
         }
@@ -120,19 +118,8 @@ public class GearscopeMenu extends AbstractContainerMenu {
                     layout.armorX, layout.armorY[i], ARMOR_EMPTY_ICONS[i])));
         }
 
-        // c) Offhand, mirroring the anonymous slot InventoryMenu uses for the shield slot.
-        this.addSlot(new Slot(playerInventory, Inventory.SLOT_OFFHAND, layout.offhandX, layout.offhandY) {
-            @Override
-            public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
-                player.onEquipItem(EquipmentSlot.OFFHAND, oldStack, newStack);
-                super.setByPlayer(newStack, oldStack);
-            }
-
-            @Override
-            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-                return Pair.of(InventoryMenu.BLOCK_ATLAS, InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD);
-            }
-        });
+        // c) Offhand, mirroring the slot InventoryMenu uses for the shield slot.
+        this.addSlot(new GearscopeOffhandSlot(playerInventory, layout.offhandX, layout.offhandY));
 
         // d) Inventory (3x9).
         for (int row = 0; row < 3; row++) {

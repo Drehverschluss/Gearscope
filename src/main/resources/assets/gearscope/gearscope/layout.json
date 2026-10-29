@@ -31,6 +31,7 @@
   },
   "tab_slots": { "x": [38, 56], "y": 165, "step": 18, "rows": 4, "page_prev_x": 38, "page_next_x": 62 },
   "cosmetic_button": { "x": 62, "y": 20, "size": 12 },
+  "recipe_button": { "x": 239, "y": 215, "size": 12 },
   "player": { "center_x": 151, "feet_y": 126, "scale": 40, "box_width": 80, "box_height": 100, "y_offset": 0.0625 },
   "attributes": {
     "x1": 315, "y1": 27, "x2": 449, "y2": 233, "list_y": 40,

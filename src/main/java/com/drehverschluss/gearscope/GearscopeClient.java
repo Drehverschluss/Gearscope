@@ -9,6 +9,8 @@ import com.drehverschluss.gearscope.client.LayoutLoader;
 import com.drehverschluss.gearscope.client.SlotPlacesLoader;
 import com.drehverschluss.gearscope.client.attributes.AttributeGroupsLoader;
 import com.drehverschluss.gearscope.compat.apothic.ApothicCompat;
+import com.drehverschluss.gearscope.compat.polymorph.PolymorphCompat;
+import com.drehverschluss.gearscope.compat.sophisticatedbackpacks.SophisticatedBackpacksCompat;
 import com.drehverschluss.gearscope.core.GearscopeServices;
 import com.drehverschluss.gearscope.menu.GearscopeMenuTypes;
 import net.neoforged.api.distmarker.Dist;
@@ -30,6 +32,13 @@ public class GearscopeClient {
         // Apothic Attributes is optional; its classes are only touched when it is installed.
         if (ModList.get().isLoaded(ApothicCompat.MOD_ID)) {
             ApothicCompat.initClient();
+        }
+        // Same for the other optional client integrations (JEI finds its plugin through @JeiPlugin itself).
+        if (ModList.get().isLoaded(PolymorphCompat.MOD_ID)) {
+            PolymorphCompat.initClient(modEventBus);
+        }
+        if (ModList.get().isLoaded(SophisticatedBackpacksCompat.MOD_ID)) {
+            SophisticatedBackpacksCompat.initClient();
         }
 
         modEventBus.addListener(GearscopeKeyMappings::register);

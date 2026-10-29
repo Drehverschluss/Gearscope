@@ -51,6 +51,7 @@ layout; resource packs can override it like any other asset.
 | | `y`, `step`, `rows` | int | First row, row distance and rows per page. |
 | | `page_prev_x`, `page_next_x` | int | Page arrows. |
 | `cosmetic_button` | `x`, `y`, `size` | int | Cosmetic toggle button. |
+| `recipe_button` | `x`, `y`, `size` | int | Polymorph's recipe selection button (only with Polymorph installed). |
 | `player` | `center_x` | int | Horizontal center of the player figure. |
 | | `feet_y` | int | Y where the feet of the figure stand. |
 | | `scale` | int | Render scale of the figure. |

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -104,21 +103,6 @@ public interface AccessorySlotSource {
      * when a container cannot be resolved.
      */
     static Slot placeholderSlot(int x, int y) {
-        return new Slot(new SimpleContainer(1), 0, x, y) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-
-            @Override
-            public boolean mayPickup(Player player) {
-                return false;
-            }
-
-            @Override
-            public boolean isActive() {
-                return false;
-            }
-        };
+        return new PlaceholderSlot(x, y);
     }
 }

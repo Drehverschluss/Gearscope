@@ -66,6 +66,11 @@ public final class GearscopeLayout {
         public int cosmeticButtonY = 20;
         public int cosmeticButtonSize = 12;
 
+        // Recipe selection button of Polymorph (only shown when it is installed and a recipe is ambiguous).
+        public int recipeButtonX = 239;
+        public int recipeButtonY = 215;
+        public int recipeButtonSize = 12;
+
         // Player figure: horizontal center, where its feet stand, render scale and the clipping box around it.
         public int playerCenterX = 151;
         public int playerFeetY = 126;
@@ -161,6 +166,9 @@ public final class GearscopeLayout {
     public final int cosmeticButtonX;
     public final int cosmeticButtonY;
     public final int cosmeticButtonSize;
+    public final int recipeButtonX;
+    public final int recipeButtonY;
+    public final int recipeButtonSize;
     public final int playerCenterX;
     public final int playerFeetY;
     public final int playerScale;
@@ -231,6 +239,9 @@ public final class GearscopeLayout {
         this.cosmeticButtonX = b.cosmeticButtonX;
         this.cosmeticButtonY = b.cosmeticButtonY;
         this.cosmeticButtonSize = b.cosmeticButtonSize;
+        this.recipeButtonX = b.recipeButtonX;
+        this.recipeButtonY = b.recipeButtonY;
+        this.recipeButtonSize = b.recipeButtonSize;
         this.playerCenterX = b.playerCenterX;
         this.playerFeetY = b.playerFeetY;
         this.playerScale = b.playerScale;
