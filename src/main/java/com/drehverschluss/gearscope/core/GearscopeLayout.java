@@ -1,5 +1,11 @@
 package com.drehverschluss.gearscope.core;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+
 /**
  * Pixel layout constants for the Gearscope screen (480x270 GUI pixels), taken from Gearscope-Konzept.md
  * section 3.2. This is the single source of truth for slot and placeholder positions in Phase 1; Phase 4
@@ -74,4 +80,62 @@ public final class GearscopeLayout {
     public static final int PLAYER_RENDER_Y2 = 122;
     public static final int PLAYER_RENDER_SCALE = 30;
     public static final float PLAYER_RENDER_Y_OFFSET = 0.0625F;
+
+    /** A named fixed position for an accessory slot (top-left of the 16x16 item area). */
+    public record Place(String name, int x, int y) {
+    }
+
+    // Named accessory places, in shift-click priority order: body places first, then the sidebars.
+    // Which slot type goes where comes from assets/gearscope/gearscope/slot_places.json.
+    public static final List<Place> PLACES = List.of(
+            new Place("body_left_top", 105, 42),
+            new Place("body_right_top", 179, 42),
+            new Place("body_left_mid", 105, 64),
+            new Place("body_right_mid", 179, 64),
+            new Place("body_left_low", 105, 86),
+            new Place("body_right_low", 179, 86),
+            new Place("strip_left_6", 27, 114),
+            new Place("strip_right_1", 256, 24),
+            new Place("strip_right_2", 256, 42),
+            new Place("strip_right_3", 256, 60),
+            new Place("strip_right_4", 256, 78),
+            new Place("strip_right_5", 256, 96),
+            new Place("strip_right_6", 256, 114));
+
+    private static final Map<String, Place> PLACES_BY_NAME =
+            PLACES.stream().collect(Collectors.toUnmodifiableMap(Place::name, Function.identity()));
+
+    @Nullable
+    public static Place place(String name) {
+        return PLACES_BY_NAME.get(name);
+    }
+
+    // Group tabs: vertical bookmarks left of the inventory.
+    public static final int TAB_X = 25;
+    public static final int TAB_Y = 169;
+    public static final int TAB_STEP = 13;
+    public static final int TAB_WIDTH = 11;
+    public static final int TAB_HEIGHT = 12;
+    public static final int TABS_VISIBLE = 5;
+    // Arrows to scroll the tab column when there are more than TABS_VISIBLE tabs.
+    public static final int TAB_SCROLL_UP_Y = 160;
+    public static final int TAB_SCROLL_DOWN_Y = TAB_Y + TABS_VISIBLE * TAB_STEP;
+    public static final int ARROW_WIDTH = 11;
+    public static final int ARROW_HEIGHT = 7;
+
+    // Slots of the selected tab: 2 columns x 4 rows per page.
+    public static final int[] TAB_SLOT_X = {38, 56};
+    public static final int TAB_SLOT_Y = 165;
+    public static final int TAB_SLOT_STEP = 18;
+    public static final int TAB_SLOT_ROWS = 4;
+    public static final int TAB_SLOTS_PER_PAGE = TAB_SLOT_X.length * TAB_SLOT_ROWS;
+    // Page arrows below the tab slots when a tab has more than TAB_SLOTS_PER_PAGE slots.
+    public static final int PAGE_PREV_X = 38;
+    public static final int PAGE_NEXT_X = 62;
+    public static final int PAGE_ARROW_Y = TAB_SLOT_Y + TAB_SLOT_ROWS * TAB_SLOT_STEP + 1;
+
+    // Cosmetic toggle, top left of the niche.
+    public static final int COSMETIC_BUTTON_X = 62;
+    public static final int COSMETIC_BUTTON_Y = 20;
+    public static final int COSMETIC_BUTTON_SIZE = 12;
 }

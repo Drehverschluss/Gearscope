@@ -1,0 +1,16 @@
+{
+  "slot_places": {
+    "necklace": ["body_left_top"],
+    "cape": ["body_right_top"],
+    "ring": ["body_left_mid", "body_right_mid"],
+    "shoes": ["body_left_low"],
+    "anklet": ["body_right_low"],
+    "back": ["strip_left_6"],
+    "hat": ["strip_right_1"],
+    "face": ["strip_right_2"],
+    "hand": ["strip_right_3"],
+    "wrist": ["strip_right_4"],
+    "belt": ["strip_right_5"],
+    "charm": ["strip_right_6"]
+  }
+}

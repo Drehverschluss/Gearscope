@@ -1,5 +1,8 @@
 {
   "key.gearscope.open": "Open Gearscope",
   "key.categories.gearscope": "Gearscope",
-  "menu.gearscope.character": "Character"
+  "menu.gearscope.character": "Character",
+  "gearscope.cosmetic_slots": "Cosmetic slots",
+  "gearscope.tab.other": "Other",
+  "gearscope.page": "Page %s/%s"
 }

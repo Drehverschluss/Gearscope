@@ -27,7 +27,26 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    // Accessories (compile only; the runtime jar for dev runs comes from libs/test)
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
+    // Forgified Fabric API Base: Accessories exposes its events as net.fabricmc.fabric.api.event.Event
+    maven {
+        name = 'Sinytra'
+        url = 'https://maven.su5ed.dev/releases'
+        content {
+            includeGroup 'org.sinytra.forgified-fabric-api'
+        }
+    }
 }
 
 base {
@@ -143,6 +162,12 @@ dependencies {
     // like the real modpack (Accessories, Polymorph, Mouse Tweaks, ...). Not compiled against, not
     // published with the mod jar. See libs/test/ (git-ignored).
     localRuntime fileTree(dir: 'libs/test', include: '*.jar')
+
+    // Optional Accessories integration: compiled against only, never bundled or required.
+    compileOnly "maven.modrinth:accessories:${accessories_version}"
+    compileOnly("org.sinytra.forgified-fabric-api:fabric-api-base:${fabric_api_base_version}") {
+        transitive = false
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

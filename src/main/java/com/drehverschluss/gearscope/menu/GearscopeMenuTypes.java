@@ -16,7 +16,7 @@ public final class GearscopeMenuTypes {
             DeferredRegister.create(BuiltInRegistries.MENU, Gearscope.MODID);
 
     public static final DeferredHolder<MenuType<?>, MenuType<GearscopeMenu>> CHARACTER =
-            MENU_TYPES.register("character", () -> IMenuTypeExtension.create(GearscopeMenu::new));
+            MENU_TYPES.register("character", () -> IMenuTypeExtension.create(GearscopeMenu::fromNetwork));
 
     private GearscopeMenuTypes() {
     }
