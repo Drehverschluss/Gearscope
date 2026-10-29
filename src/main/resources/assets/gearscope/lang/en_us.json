@@ -4,5 +4,17 @@
   "menu.gearscope.character": "Character",
   "gearscope.cosmetic_slots": "Cosmetic slots",
   "gearscope.tab.other": "Other",
-  "gearscope.page": "Page %s/%s"
+  "gearscope.page": "Page %s/%s",
+  "gearscope.attributes.title": "Attributes",
+  "gearscope.attributes.hide_unchanged": "Hide unchanged",
+  "gearscope.attributes.current": "Current: %s",
+  "gearscope.attributes.base": "Base: %s",
+  "gearscope.attributes.modifiers": "Modifiers",
+  "gearscope.group.offense": "Offense",
+  "gearscope.group.ranged": "Ranged",
+  "gearscope.group.defense": "Defense",
+  "gearscope.group.magic": "Magic",
+  "gearscope.group.movement": "Movement",
+  "gearscope.group.utility": "Utility",
+  "gearscope.group.other": "Other"
 }

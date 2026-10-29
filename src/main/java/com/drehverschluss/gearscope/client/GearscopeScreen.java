@@ -1,6 +1,7 @@
 package com.drehverschluss.gearscope.client;
 
 import com.drehverschluss.gearscope.Gearscope;
+import com.drehverschluss.gearscope.client.attributes.AttributeListPanel;
 import com.drehverschluss.gearscope.core.AccessoryPlacement;
 import com.drehverschluss.gearscope.core.AccessorySlotSpec;
 import com.drehverschluss.gearscope.core.GearscopeLayout;
@@ -33,6 +34,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     private static final int PLACEHOLDER_COLOR = 0xA0101018;
+    private static final int PARCHMENT_PLACEHOLDER_COLOR = 0xFFE6D3A8;
     private static final int SLOT_FRAME_COLOR = 0xFF3C3C3C;
     private static final int WIDGET_COLOR = 0xC0303038;
     private static final int WIDGET_HOVER_COLOR = 0xFF505060;
@@ -53,6 +55,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     private final Map<String, Integer> tabSlotCounts = new HashMap<>();
     private final Map<String, ResourceLocation> tabIcons = new HashMap<>();
     private final boolean hasAccessories;
+    private final AttributeListPanel attributePanel = new AttributeListPanel();
 
     private float xMouse;
     private float yMouse;
@@ -182,8 +185,16 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         this.renderWidgetTooltips(guiGraphics, mouseX, mouseY);
+        if (this.hoveredSlot == null && this.menu.getCarried().isEmpty()) {
+            this.attributePanel.renderTooltip(guiGraphics, this.leftPos, this.topPos, mouseX, mouseY);
+        }
         this.xMouse = mouseX;
         this.yMouse = mouseY;
+    }
+
+    @Override
+    protected void containerTick() {
+        this.attributePanel.tick();
     }
 
     @Override
@@ -200,8 +211,10 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
                 GearscopeLayout.NICHE_X2, GearscopeLayout.NICHE_Y2);
         fillPlaceholder(guiGraphics, left, top, GearscopeLayout.LOWER_PANEL_X1, GearscopeLayout.LOWER_PANEL_Y1,
                 GearscopeLayout.LOWER_PANEL_X2, GearscopeLayout.LOWER_PANEL_Y2);
-        fillPlaceholder(guiGraphics, left, top, GearscopeLayout.SCROLL_X1, GearscopeLayout.SCROLL_Y1,
-                GearscopeLayout.SCROLL_X2, GearscopeLayout.SCROLL_Y2);
+        // The scroll is still a placeholder, but light like parchment so the dark attribute text is readable.
+        guiGraphics.fill(left + GearscopeLayout.SCROLL_X1 - 4, top + GearscopeLayout.SCROLL_Y1 - 4,
+                left + GearscopeLayout.SCROLL_X2 + 4, top + GearscopeLayout.SCROLL_Y2 + 4, PARCHMENT_PLACEHOLDER_COLOR);
+        this.attributePanel.render(guiGraphics, left, top, mouseX, mouseY);
 
         // Player figure; Accessories draws equipped (or cosmetic) accessories on it through its own render layer.
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,
@@ -367,7 +380,35 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             return true;
         }
+        if (this.attributePanel.mouseClicked(this.leftPos, this.topPos, mouseX, mouseY, button)) {
+            return true;
+        }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (this.attributePanel.mouseDragged(this.topPos, mouseY)) {
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (this.attributePanel.mouseReleased()) {
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        // Over the scroll the wheel only scrolls the attribute list.
+        if (this.attributePanel.mouseScrolled(this.leftPos, this.topPos, mouseX, mouseY, scrollY)) {
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     private boolean handleWidgetClick(int mouseX, int mouseY) {

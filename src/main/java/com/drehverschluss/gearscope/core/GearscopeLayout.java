@@ -47,11 +47,20 @@ public final class GearscopeLayout {
     public static final int LOWER_PANEL_X2 = 282;
     public static final int LOWER_PANEL_Y2 = 246;
 
-    // Attribute scroll area (empty placeholder in Phase 1, filled in Phase 3).
+    // Attribute scroll area (text area of the scroll; background is still a placeholder until Phase 4).
     public static final int SCROLL_X1 = 315;
     public static final int SCROLL_Y1 = 27;
     public static final int SCROLL_X2 = 449;
     public static final int SCROLL_Y2 = 233;
+    // Inside it: a title row (title + "hide unchanged" checkbox), then the scrolling list.
+    public static final int ATTR_TITLE_Y = SCROLL_Y1;
+    public static final int ATTR_CHECKBOX_SIZE = 8;
+    public static final int ATTR_LIST_Y = SCROLL_Y1 + 13;
+    public static final int ATTR_SCROLLBAR_WIDTH = 3;
+    public static final int ATTR_HEADER_HEIGHT = 11;
+    public static final int ATTR_ROW_HEIGHT = 10;
+    public static final int ATTR_GROUP_GAP = 3;
+    public static final int ATTR_ICON_SIZE = 9;
 
     // Armor (head, chest, legs, feet, top to bottom) and offhand, left sidebar.
     public static final int ARMOR_X = 27;

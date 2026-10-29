@@ -1,0 +1,120 @@
+{
+  "groups": [
+    {
+      "id": "offense",
+      "order": 10,
+      "attributes": [
+        "minecraft:generic.attack_damage",
+        "minecraft:generic.attack_speed",
+        "minecraft:generic.attack_knockback",
+        "minecraft:player.sweeping_damage_ratio",
+        "apothic_attributes:crit_chance",
+        "apothic_attributes:crit_damage",
+        "apothic_attributes:armor_pierce",
+        "apothic_attributes:armor_shred",
+        "apothic_attributes:prot_pierce",
+        "apothic_attributes:prot_shred",
+        "apothic_attributes:current_hp_damage",
+        "apothic_attributes:life_steal",
+        "apothic_attributes:fire_damage",
+        "apothic_attributes:cold_damage",
+        "artifacts:generic.attack_burning_duration",
+        "critical_strike:*",
+        "more_rpg_classes:*"
+      ]
+    },
+    {
+      "id": "ranged",
+      "order": 20,
+      "attributes": [
+        "apothic_attributes:arrow_damage",
+        "apothic_attributes:arrow_velocity",
+        "apothic_attributes:draw_speed",
+        "apothic_attributes:projectile_damage",
+        "ranged_weapon:*"
+      ]
+    },
+    {
+      "id": "defense",
+      "order": 30,
+      "attributes": [
+        "minecraft:generic.max_health",
+        "minecraft:generic.armor",
+        "minecraft:generic.armor_toughness",
+        "minecraft:generic.knockback_resistance",
+        "minecraft:generic.max_absorption",
+        "minecraft:generic.explosion_knockback_resistance",
+        "minecraft:generic.burning_time",
+        "apothic_attributes:dodge_chance",
+        "apothic_attributes:ghost_health",
+        "apothic_attributes:overheal",
+        "apothic_attributes:healing_received",
+        "artifacts:generic.invincibility_ticks",
+        "spell_engine:evasion_chance",
+        "spell_engine:damage_taken",
+        "spell_engine:healing_taken",
+        "spell_power:resistance.generic"
+      ]
+    },
+    {
+      "id": "magic",
+      "order": 40,
+      "attributes": [
+        "spell_power:*",
+        "spell_engine:*",
+        "apothic_attributes:cooldown_reduction"
+      ]
+    },
+    {
+      "id": "movement",
+      "order": 50,
+      "attributes": [
+        "minecraft:generic.movement_speed",
+        "minecraft:player.sneaking_speed",
+        "minecraft:generic.jump_strength",
+        "minecraft:generic.step_height",
+        "minecraft:generic.gravity",
+        "minecraft:generic.safe_fall_distance",
+        "minecraft:generic.fall_damage_multiplier",
+        "minecraft:generic.movement_efficiency",
+        "minecraft:generic.water_movement_efficiency",
+        "minecraft:generic.flying_speed",
+        "neoforge:swim_speed",
+        "neoforge:creative_flight",
+        "apothic_attributes:elytra_flight",
+        "artifacts:generic.sprinting_speed",
+        "artifacts:generic.sprinting_step_height",
+        "artifacts:generic.mount_speed",
+        "artifacts:generic.movement_speed_on_snow",
+        "artifacts:generic.slip_resistance",
+        "combat_roll:*",
+        "paraglider:*"
+      ]
+    },
+    {
+      "id": "utility",
+      "order": 60,
+      "attributes": [
+        "minecraft:player.block_break_speed",
+        "minecraft:player.mining_efficiency",
+        "minecraft:player.submerged_mining_speed",
+        "minecraft:player.block_interaction_range",
+        "minecraft:player.entity_interaction_range",
+        "minecraft:generic.luck",
+        "minecraft:generic.oxygen_bonus",
+        "minecraft:generic.scale",
+        "apothic_attributes:mining_speed",
+        "apothic_attributes:experience_gained",
+        "artifacts:generic.drinking_speed",
+        "artifacts:generic.eating_speed",
+        "artifacts:player.villager_reputation",
+        "artifacts:player.entity_experience"
+      ]
+    },
+    {
+      "id": "other",
+      "order": 1000,
+      "attributes": []
+    }
+  ]
+}

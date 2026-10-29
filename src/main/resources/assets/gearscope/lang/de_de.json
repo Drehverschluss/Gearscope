@@ -4,5 +4,17 @@
   "menu.gearscope.character": "Charakter",
   "gearscope.cosmetic_slots": "Kosmetische Slots",
   "gearscope.tab.other": "Sonstiges",
-  "gearscope.page": "Seite %s/%s"
+  "gearscope.page": "Seite %s/%s",
+  "gearscope.attributes.title": "Attribute",
+  "gearscope.attributes.hide_unchanged": "Nur geänderte Werte",
+  "gearscope.attributes.current": "Aktuell: %s",
+  "gearscope.attributes.base": "Basis: %s",
+  "gearscope.attributes.modifiers": "Modifikatoren",
+  "gearscope.group.offense": "Angriff",
+  "gearscope.group.ranged": "Fernkampf",
+  "gearscope.group.defense": "Verteidigung",
+  "gearscope.group.magic": "Magie",
+  "gearscope.group.movement": "Bewegung",
+  "gearscope.group.utility": "Nützliches",
+  "gearscope.group.other": "Sonstiges"
 }

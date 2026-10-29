@@ -168,6 +168,8 @@ dependencies {
     compileOnly("org.sinytra.forgified-fabric-api:fabric-api-base:${fabric_api_base_version}") {
         transitive = false
     }
+    // Optional Apothic Attributes integration (attribute tooltip): compiled against only.
+    compileOnly "maven.modrinth:apothic-attributes:${apothic_attributes_version}"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
