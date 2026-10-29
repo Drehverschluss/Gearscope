@@ -6,6 +6,7 @@ import com.drehverschluss.gearscope.core.AccessoryPlacement;
 import com.drehverschluss.gearscope.core.AccessorySlotSpec;
 import com.drehverschluss.gearscope.core.GearscopeLayout;
 import com.drehverschluss.gearscope.core.GearscopeServices;
+import com.drehverschluss.gearscope.core.RenderToggleSlot;
 import com.drehverschluss.gearscope.core.ToggleableSlot;
 import com.drehverschluss.gearscope.menu.GearscopeMenu;
 import com.drehverschluss.gearscope.network.AccessoryQuickMoveOrderPayload;
@@ -43,6 +44,14 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     private static final ResourceLocation COSMETIC_ICON =
             ResourceLocation.fromNamespaceAndPath("accessories", "textures/gui/theme/cosmetic_rainbow_icon.png");
     private static final ResourceLocation TAB_UNKNOWN_ICON = Gearscope.id("textures/gui/tab_unknown.png");
+    // Accessories' own toggle texture; position and size as in its screens (top right of the slot).
+    private static final ResourceLocation RENDER_TOGGLE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath("accessories", "textures/gui/theme/light/button_toggle_rounded.png");
+    private static final int RENDER_TOGGLE_SIZE = 5;
+    private static final int RENDER_TOGGLE_OFFSET_X = 13;
+    private static final int RENDER_TOGGLE_OFFSET_Y = -2;
+    // Above slot items and their count (z 150-200), below the item on the cursor (z 232).
+    private static final float RENDER_TOGGLE_Z = 210.0F;
 
     private enum Arrow { UP, DOWN, LEFT, RIGHT }
 
@@ -57,6 +66,8 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     private float xMouse;
     private float yMouse;
+    // Set after a click on a render toggle: the following drag and release belong to that click, not to a slot.
+    private boolean swallowUntilRelease;
 
     public GearscopeScreen(GearscopeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -185,14 +196,24 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Title and "Inventory" labels are intentionally not drawn.
+        // Title and "Inventory" labels are intentionally not drawn. Drawn here (relative to the panel) so the
+        // render toggles sit above the slot items but below the item on the cursor.
+        if (this.hasAccessories) {
+            this.renderRenderToggles(guiGraphics, mouseX, mouseY);
+        }
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-        this.renderWidgetTooltips(guiGraphics, mouseX, mouseY);
+        Slot toggleSlot = this.menu.getCarried().isEmpty() ? this.renderToggleAt(mouseX, mouseY) : null;
+        if (toggleSlot != null) {
+            boolean shown = ((RenderToggleSlot) toggleSlot).gearscope$rendersOnCharacter();
+            guiGraphics.renderTooltip(this.font, Component.translatable("accessories.display.toggle." + (shown ? "hide" : "show")), mouseX, mouseY);
+        } else {
+            this.renderTooltip(guiGraphics, mouseX, mouseY);
+            this.renderWidgetTooltips(guiGraphics, mouseX, mouseY);
+        }
         if (this.hoveredSlot == null && this.menu.getCarried().isEmpty()) {
             this.attributePanel.renderTooltip(guiGraphics, this.leftPos, this.topPos, mouseX, mouseY);
         }
@@ -244,6 +265,79 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             this.renderCosmeticButton(guiGraphics, mouseX, mouseY);
             this.renderTabs(guiGraphics, mouseX, mouseY);
         }
+    }
+
+    // --- Render toggles (Accessories' per-slot "show on character" switch) ---
+
+    /**
+     * The 5x5 toggle at the top right of every visible accessory slot (functional and cosmetic, like Accessories'
+     * own screen), drawn with Accessories' rounded toggle texture. Its light theme is used because its on/off
+     * states are clearly different on the dark wood.
+     */
+    private void renderRenderToggles(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, RENDER_TOGGLE_Z);
+        RenderSystem.enableBlend();
+        for (GearscopeMenu.AccessoryEntry entry : this.menu.accessoryEntries()) {
+            Slot slot = entry.slot();
+            if (slot instanceof RenderToggleSlot toggle && slot.isActive()) {
+                int x = slot.x + RENDER_TOGGLE_OFFSET_X;
+                int y = slot.y + RENDER_TOGGLE_OFFSET_Y;
+                boolean hovered = this.isOver(mouseX, mouseY, x, y, RENDER_TOGGLE_SIZE, RENDER_TOGGLE_SIZE);
+                // Texture rows: shown, shown + hovered, hidden, hidden + hovered.
+                int state = (toggle.gearscope$rendersOnCharacter() ? 0 : 2) + (hovered ? 1 : 0);
+                drawNinePatch(guiGraphics, RENDER_TOGGLE_TEXTURE, x, y, RENDER_TOGGLE_SIZE, RENDER_TOGGLE_SIZE, state * 64);
+            }
+        }
+        RenderSystem.disableBlend();
+        guiGraphics.pose().popPose();
+    }
+
+    @Nullable
+    private Slot renderToggleAt(double mouseX, double mouseY) {
+        if (!this.hasAccessories) {
+            return null;
+        }
+        for (GearscopeMenu.AccessoryEntry entry : this.menu.accessoryEntries()) {
+            Slot slot = entry.slot();
+            if (slot instanceof RenderToggleSlot && slot.isActive() && this.isOver(mouseX, mouseY,
+                    slot.x + RENDER_TOGGLE_OFFSET_X, slot.y + RENDER_TOGGLE_OFFSET_Y, RENDER_TOGGLE_SIZE, RENDER_TOGGLE_SIZE)) {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Draws one 64x64 cell (at {@code v}) of a 64x256 nine-patch texture with 3 px corners at any size; for sizes
+     * below 6 px the corners are cut to fit, like the nine-patch renderer Accessories uses.
+     */
+    private static void drawNinePatch(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int width, int height, int v) {
+        int[] xs = ninePatchSpans(width);
+        int[] ys = ninePatchSpans(height);
+        int[] us = {0, 3, 64 - xs[2]};
+        int[] vs = {v, v + 3, v + 64 - ys[2]};
+        int[] uSizes = {xs[0], 58, xs[2]};
+        int[] vSizes = {ys[0], 58, ys[2]};
+        int drawY = y;
+        for (int row = 0; row < 3; row++) {
+            int drawX = x;
+            for (int column = 0; column < 3; column++) {
+                if (xs[column] > 0 && ys[row] > 0) {
+                    guiGraphics.blit(texture, drawX, drawY, xs[column], ys[row], us[column], vs[row],
+                            uSizes[column], vSizes[row], 64, 256);
+                }
+                drawX += xs[column];
+            }
+            drawY += ys[row];
+        }
+    }
+
+    /** Widths of the first corner, the stretched middle and the last corner for a 3 px corner nine-patch. */
+    private static int[] ninePatchSpans(int size) {
+        int first = Math.min(3, (size + 1) / 2);
+        int last = Math.min(3, size / 2);
+        return new int[] {first, size - first - last, last};
     }
 
     /** Small gold arrow from the 2x2 grid down to the result slot. */
@@ -384,8 +478,29 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     // --- Input ---
 
+    /**
+     * Click on an accessory slot's render toggle. Called from a high-priority mouse-pressed listener (so neither
+     * the slot nor Mouse Tweaks sees the click) and again from mouseClicked as a fallback.
+     */
+    public boolean clickRenderToggle(double mouseX, double mouseY, int button) {
+        if (button != 0 || !this.hasAccessories) {
+            return false;
+        }
+        Slot slot = this.renderToggleAt(mouseX, mouseY);
+        if (slot == null) {
+            return false;
+        }
+        ((RenderToggleSlot) slot).gearscope$toggleRendering();
+        this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        this.swallowUntilRelease = true;
+        return true;
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.clickRenderToggle(mouseX, mouseY, button)) {
+            return true;
+        }
         if (button == 0 && this.hasAccessories && this.handleWidgetClick((int) mouseX, (int) mouseY)) {
             this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             return true;
@@ -398,6 +513,9 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (this.swallowUntilRelease) {
+            return true;
+        }
         if (this.attributePanel.mouseDragged(this.topPos, mouseY)) {
             return true;
         }
@@ -406,6 +524,10 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (this.swallowUntilRelease) {
+            this.swallowUntilRelease = false;
+            return true;
+        }
         if (this.attributePanel.mouseReleased()) {
             return true;
         }

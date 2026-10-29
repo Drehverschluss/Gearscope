@@ -1,11 +1,14 @@
 package com.drehverschluss.gearscope.compat.accessories;
 
+import com.drehverschluss.gearscope.core.RenderToggleSlot;
 import com.drehverschluss.gearscope.core.ToggleableSlot;
 import com.mojang.datafixers.util.Pair;
 import io.wispforest.accessories.api.AccessoriesAPI;
 import io.wispforest.accessories.api.AccessoriesContainer;
 import io.wispforest.accessories.api.menu.AccessoriesBasedSlot;
 import io.wispforest.accessories.api.slot.SlotType;
+import io.wispforest.accessories.networking.AccessoriesNetworking;
+import io.wispforest.accessories.networking.server.SyncCosmeticToggle;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import javax.annotation.Nullable;
@@ -24,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
  * The cosmetic handling and the empty slot tooltip are adapted from Accessories' AccessoriesInternalSlot (MIT),
  * see THIRD_PARTY_NOTICES.md.
  */
-public class GearscopeAccessorySlot extends AccessoriesBasedSlot implements ToggleableSlot {
+public class GearscopeAccessorySlot extends AccessoriesBasedSlot implements ToggleableSlot, RenderToggleSlot {
     private final boolean cosmetic;
     @Nullable
     private final ResourceLocation emptyIcon;
@@ -95,5 +98,20 @@ public class GearscopeAccessorySlot extends AccessoriesBasedSlot implements Togg
         String key = this.cosmetic ? "accessories.cosmetic_slot.tooltip.singular" : "accessories.slot.tooltip.singular";
         return List.of(Component.translatable(key).withStyle(ChatFormatting.GRAY)
                 .append(Component.translatable(slotType.translation()).withStyle(ChatFormatting.BLUE)));
+    }
+
+    // Functional and cosmetic slot of the same index share one render option, as in Accessories' own screen.
+    @Override
+    public boolean gearscope$rendersOnCharacter() {
+        return this.accessoriesContainer.shouldRender(this.getContainerSlot());
+    }
+
+    @Override
+    public void gearscope$toggleRendering() {
+        SlotType slotType = this.accessoriesContainer.slotType();
+        if (slotType != null) {
+            // Same packet and target as Accessories' slot toggle; null means the player's own entity.
+            AccessoriesNetworking.sendToServer(SyncCosmeticToggle.of(null, slotType, this.getContainerSlot()));
+        }
     }
 }

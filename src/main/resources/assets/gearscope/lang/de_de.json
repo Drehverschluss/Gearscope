@@ -9,6 +9,8 @@
   "gearscope.attributes.hide_unchanged": "Nur geänderte Werte",
   "gearscope.attributes.current": "Aktuell: %s",
   "gearscope.attributes.base": "Basis: %s",
+  "accessories.display.toggle.show": "Am Charakter anzeigen",
+  "accessories.display.toggle.hide": "Am Charakter ausblenden",
   "gearscope.configuration.accessories": "Accessories",
   "gearscope.configuration.ignoreWildcardItemsForUsedSlots": "Platzhalter-Items bei unbenutzten Slots ignorieren",
   "gearscope.configuration.ignoreWildcardItemsForUsedSlots.tooltip": "Items, die in jeden Slot-Typ passen (accessories:any), machen einen Slot-Typ nicht zu einem benutzten. Slot-Typen ohne echtes Item bleiben so ausgeblendet. Slots mit einem Item werden immer angezeigt.",

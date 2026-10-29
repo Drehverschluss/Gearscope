@@ -21,12 +21,11 @@ layout; resource packs can override it like any other asset.
 
 ## Default places
 
-The niche around the figure has four rows with an inner and an outer column on both sides (the top row only has the
-inner column).
+The niche around the figure has four rows with an inner and an outer column on both sides.
 
 | Place | Position `[x, y]` | Default slot type |
 |---|---|---|
-| `body_left_top`, `body_right_top` | `[103, 52]`, `[183, 52]` – shoulders | necklace, cape |
+| `body_left_outer_top`, `body_left_top`, `body_right_top`, `body_right_outer_top` | `[81, 52]`, `[103, 52]`, `[183, 52]`, `[205, 52]` – shoulders | necklace, cape (inner); outer places free |
 | `body_left_outer_mid`, `body_left_mid`, `body_right_mid`, `body_right_outer_mid` | `[81, 72]`, `[103, 72]`, `[183, 72]`, `[205, 72]` – hands | hand (outer), ring (inner) |
 | `body_left_outer_waist`, `body_left_waist`, `body_right_waist`, `body_right_outer_waist` | `[81, 92]`, `[103, 92]`, `[183, 92]`, `[205, 92]` – waist | charm (outer), belt (inner) |
 | `body_left_outer_low`, `body_left_low`, `body_right_low`, `body_right_outer_low` | `[81, 112]`, `[103, 112]`, `[183, 112]`, `[205, 112]` – feet | anklet (outer), shoes (inner) |

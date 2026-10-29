@@ -14,6 +14,7 @@ import com.drehverschluss.gearscope.compat.sophisticatedbackpacks.SophisticatedB
 import com.drehverschluss.gearscope.core.GearscopeServices;
 import com.drehverschluss.gearscope.menu.GearscopeMenuTypes;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -21,6 +22,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = Gearscope.MODID, dist = Dist.CLIENT)
@@ -47,6 +49,16 @@ public class GearscopeClient {
         NeoForge.EVENT_BUS.addListener(GearscopeKeyMappings::handleClientTick);
         NeoForge.EVENT_BUS.addListener(GuiScaleOverride::onClientTick);
         NeoForge.EVENT_BUS.addListener(GuiScaleOverride::onLoggingOut);
+        // Before the screen and other mods (Mouse Tweaks remembers drag starts on mouse down): a click on an
+        // accessory slot's render toggle must never reach the slot.
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, GearscopeClient::onMousePressed);
+    }
+
+    private static void onMousePressed(ScreenEvent.MouseButtonPressed.Pre event) {
+        if (event.getScreen() instanceof GearscopeScreen screen
+                && screen.clickRenderToggle(event.getMouseX(), event.getMouseY(), event.getButton())) {
+            event.setCanceled(true);
+        }
     }
 
     private static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {

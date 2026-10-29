@@ -93,8 +93,10 @@ public final class GearscopeLayout {
 
         public Builder() {
             // Body places row by row (top, mid, waist, low), each from the outer left to the outer right.
+            this.places.put("body_left_outer_top", new int[] {81, 52});
             this.places.put("body_left_top", new int[] {103, 52});
             this.places.put("body_right_top", new int[] {183, 52});
+            this.places.put("body_right_outer_top", new int[] {205, 52});
             this.places.put("body_left_outer_mid", new int[] {81, 72});
             this.places.put("body_left_mid", new int[] {103, 72});
             this.places.put("body_right_mid", new int[] {183, 72});

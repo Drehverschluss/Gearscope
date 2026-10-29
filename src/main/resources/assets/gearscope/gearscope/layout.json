@@ -11,8 +11,10 @@
   "hotbar": { "y": 221 },
   "crafting": { "x": [243, 261], "y": [171, 189], "result_x": 252, "result_y": 213, "arrow_y": 207 },
   "places": {
+    "body_left_outer_top": [81, 52],
     "body_left_top": [103, 52],
     "body_right_top": [183, 52],
+    "body_right_outer_top": [205, 52],
     "body_left_outer_mid": [81, 72],
     "body_left_mid": [103, 72],
     "body_right_mid": [183, 72],
