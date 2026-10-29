@@ -1,6 +1,7 @@
 package com.drehverschluss.gearscope.client.attributes;
 
 import com.drehverschluss.gearscope.client.GearscopeClientConfig;
+import com.drehverschluss.gearscope.client.GearscopeStyle;
 import com.drehverschluss.gearscope.core.GearscopeLayout;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -39,14 +40,15 @@ import net.neoforged.neoforge.common.BooleanAttribute;
  * every few ticks; values are read from the attribute instances every frame.
  */
 public final class AttributeListPanel {
-    // Dark colors for the light parchment, all in one place.
-    public static final int COLOR_TEXT = 0xFF3A2414;
-    public static final int COLOR_HEADER = 0xFF6E1C18;
-    public static final int COLOR_BETTER = 0xFF1E641E;
-    public static final int COLOR_WORSE = 0xFFA01E1E;
-    private static final int COLOR_ROW_HOVER = 0x22000000;
-    private static final int COLOR_SCROLLBAR_TRACK = 0x33000000;
-    private static final int COLOR_SCROLLBAR_THUMB = 0xFF6E5A40;
+    // Colors live in GearscopeStyle; aliases keep the drawing code short.
+    public static final int COLOR_TEXT = GearscopeStyle.ATTR_TEXT;
+    public static final int COLOR_HEADER = GearscopeStyle.ATTR_HEADER;
+    public static final int COLOR_BETTER = GearscopeStyle.ATTR_BETTER;
+    public static final int COLOR_WORSE = GearscopeStyle.ATTR_WORSE;
+    private static final int COLOR_ROW_HOVER = GearscopeStyle.ATTR_ROW_HOVER;
+    private static final int COLOR_SCROLLBAR_TRACK = GearscopeStyle.ATTR_SCROLLBAR_TRACK;
+    private static final int COLOR_SCROLLBAR_THUMB = GearscopeStyle.ATTR_SCROLLBAR_THUMB;
+    private static final int COLOR_CHECKBOX = GearscopeStyle.ATTR_CHECKBOX;
 
     private static final int REBUILD_INTERVAL_TICKS = 10;
     private static final int TOOLTIP_MAX_WIDTH = 220;
@@ -274,13 +276,13 @@ public final class AttributeListPanel {
 
     private void renderCheckbox(GuiGraphics guiGraphics, int x, int y, boolean checked) {
         int size = GearscopeLayout.ATTR_CHECKBOX_SIZE;
-        guiGraphics.renderOutline(x, y, size, size, COLOR_TEXT);
+        guiGraphics.renderOutline(x, y, size, size, COLOR_CHECKBOX);
         if (checked) {
             // Small check mark.
-            guiGraphics.fill(x + 2, y + 4, x + 3, y + 6, COLOR_TEXT);
-            guiGraphics.fill(x + 3, y + 5, x + 4, y + 7, COLOR_TEXT);
-            guiGraphics.fill(x + 4, y + 4, x + 5, y + 6, COLOR_TEXT);
-            guiGraphics.fill(x + 5, y + 2, x + 6, y + 5, COLOR_TEXT);
+            guiGraphics.fill(x + 2, y + 4, x + 3, y + 6, COLOR_CHECKBOX);
+            guiGraphics.fill(x + 3, y + 5, x + 4, y + 7, COLOR_CHECKBOX);
+            guiGraphics.fill(x + 4, y + 4, x + 5, y + 6, COLOR_CHECKBOX);
+            guiGraphics.fill(x + 5, y + 2, x + 6, y + 5, COLOR_CHECKBOX);
         }
     }
 

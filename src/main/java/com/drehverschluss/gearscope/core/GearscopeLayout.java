@@ -79,6 +79,8 @@ public final class GearscopeLayout {
     public static final int[] CRAFT_Y = {171, 189};
     public static final int RESULT_X = 252;
     public static final int RESULT_Y = 213;
+    // Top of the small arrow pointing from the grid down to the result.
+    public static final int CRAFT_ARROW_Y = 207;
 
     // Player figure in the niche: a fixed-size box passed to
     // InventoryScreen.renderEntityInInventoryFollowsMouse. Center x=151, feet at approx. y=122.

@@ -9,6 +9,7 @@ import com.drehverschluss.gearscope.core.GearscopeServices;
 import com.drehverschluss.gearscope.core.ToggleableSlot;
 import com.drehverschluss.gearscope.menu.GearscopeMenu;
 import com.drehverschluss.gearscope.network.AccessoryQuickMoveOrderPayload;
+import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,15 +34,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * group tabs, cosmetic toggle). Visibility of accessory slots is decided here, on the client only.
  */
 public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
-    private static final int PLACEHOLDER_COLOR = 0xA0101018;
-    private static final int PARCHMENT_PLACEHOLDER_COLOR = 0xFFE6D3A8;
-    private static final int SLOT_FRAME_COLOR = 0xFF3C3C3C;
-    private static final int WIDGET_COLOR = 0xC0303038;
-    private static final int WIDGET_HOVER_COLOR = 0xFF505060;
-    private static final int WIDGET_ACTIVE_COLOR = 0xFF6B5A3A;
-    private static final int HIGHLIGHT_COLOR = 0xFFE0C060;
-    private static final int ARROW_COLOR = 0xFFE0E0E0;
-    private static final int ARROW_DISABLED_COLOR = 0xFF606060;
     private static final ResourceLocation COSMETIC_ICON =
             ResourceLocation.fromNamespaceAndPath("accessories", "textures/gui/theme/cosmetic_rainbow_icon.png");
     private static final ResourceLocation TAB_UNKNOWN_ICON = Gearscope.id("textures/gui/tab_unknown.png");
@@ -202,19 +194,13 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         int left = this.leftPos;
         int top = this.topPos;
 
-        // Placeholder panels for the areas from Gearscope-Konzept.md 3.2; replaced by real art in Phase 4.
-        fillPlaceholder(guiGraphics, left, top, GearscopeLayout.SIDEBAR_LEFT_X1, GearscopeLayout.SIDEBAR_LEFT_Y1,
-                GearscopeLayout.SIDEBAR_LEFT_X2, GearscopeLayout.SIDEBAR_LEFT_Y2);
-        fillPlaceholder(guiGraphics, left, top, GearscopeLayout.SIDEBAR_RIGHT_X1, GearscopeLayout.SIDEBAR_RIGHT_Y1,
-                GearscopeLayout.SIDEBAR_RIGHT_X2, GearscopeLayout.SIDEBAR_RIGHT_Y2);
-        fillPlaceholder(guiGraphics, left, top, GearscopeLayout.NICHE_X1, GearscopeLayout.NICHE_Y1,
-                GearscopeLayout.NICHE_X2, GearscopeLayout.NICHE_Y2);
-        fillPlaceholder(guiGraphics, left, top, GearscopeLayout.LOWER_PANEL_X1, GearscopeLayout.LOWER_PANEL_Y1,
-                GearscopeLayout.LOWER_PANEL_X2, GearscopeLayout.LOWER_PANEL_Y2);
-        // The scroll is still a placeholder, but light like parchment so the dark attribute text is readable.
-        guiGraphics.fill(left + GearscopeLayout.SCROLL_X1 - 4, top + GearscopeLayout.SCROLL_Y1 - 4,
-                left + GearscopeLayout.SCROLL_X2 + 4, top + GearscopeLayout.SCROLL_Y2 + 4, PARCHMENT_PLACEHOLDER_COLOR);
+        // Painted background at 3x resolution, scaled down to 480x270; linear filtering suits a painting.
+        this.minecraft.getTextureManager().getTexture(GearscopeStyle.BACKGROUND).setFilter(true, false);
+        guiGraphics.blit(GearscopeStyle.BACKGROUND, left, top, this.imageWidth, this.imageHeight, 0, 0,
+                GearscopeStyle.BACKGROUND_TEXTURE_WIDTH, GearscopeStyle.BACKGROUND_TEXTURE_HEIGHT,
+                GearscopeStyle.BACKGROUND_TEXTURE_WIDTH, GearscopeStyle.BACKGROUND_TEXTURE_HEIGHT);
         this.attributePanel.render(guiGraphics, left, top, mouseX, mouseY);
+        this.renderCraftingArrow(guiGraphics);
 
         // Player figure; Accessories draws equipped (or cosmetic) accessories on it through its own render layer.
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,
@@ -223,16 +209,31 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
                 GearscopeLayout.PLAYER_RENDER_SCALE, GearscopeLayout.PLAYER_RENDER_Y_OFFSET,
                 this.xMouse, this.yMouse, this.minecraft.player);
 
-        // Simple frame around every visible slot so the layout can be judged without real slot art.
+        // Frame under every visible slot (none for empty places); violet for cosmetic slots.
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        int frameSize = GearscopeStyle.SLOT_TEXTURE_SIZE;
         for (Slot slot : this.menu.slots) {
             if (slot.isActive()) {
-                guiGraphics.renderOutline(left + slot.x - 1, top + slot.y - 1, 18, 18, SLOT_FRAME_COLOR);
+                ResourceLocation frame = slot instanceof ToggleableSlot toggleable && toggleable.gearscope$isCosmetic()
+                        ? GearscopeStyle.SLOT_COSMETIC : GearscopeStyle.SLOT;
+                guiGraphics.blit(frame, left + slot.x - 1, top + slot.y - 1, 0, 0, frameSize, frameSize, frameSize, frameSize);
             }
         }
+        RenderSystem.disableBlend();
 
         if (this.hasAccessories) {
             this.renderCosmeticButton(guiGraphics, mouseX, mouseY);
             this.renderTabs(guiGraphics, mouseX, mouseY);
+        }
+    }
+
+    /** Small gold arrow from the 2x2 grid down to the result slot. */
+    private void renderCraftingArrow(GuiGraphics guiGraphics) {
+        int centerX = this.leftPos + GearscopeLayout.RESULT_X + 8;
+        int y = this.topPos + GearscopeLayout.CRAFT_ARROW_Y;
+        for (int row = 0; row < 4; row++) {
+            guiGraphics.fill(centerX - 3 + row, y + row, centerX + 4 - row, y + row + 1, GearscopeStyle.ARROW);
         }
     }
 
@@ -241,12 +242,9 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         int y = this.topPos + GearscopeLayout.COSMETIC_BUTTON_Y;
         int size = GearscopeLayout.COSMETIC_BUTTON_SIZE;
         boolean active = GearscopeClientState.cosmeticMode;
-        boolean hovered = this.isOver(mouseX, mouseY, GearscopeLayout.COSMETIC_BUTTON_X, GearscopeLayout.COSMETIC_BUTTON_Y, size, size);
-        guiGraphics.fill(x, y, x + size, y + size, active ? WIDGET_ACTIVE_COLOR : hovered ? WIDGET_HOVER_COLOR : WIDGET_COLOR);
+        guiGraphics.fill(x, y, x + size, y + size, active ? GearscopeStyle.COSMETIC_ACTIVE_FILL : GearscopeStyle.COSMETIC_FILL);
+        guiGraphics.renderOutline(x, y, size, size, active ? GearscopeStyle.COSMETIC_ACTIVE_BORDER : GearscopeStyle.COSMETIC_BORDER);
         guiGraphics.blit(COSMETIC_ICON, x + 1, y + 1, size - 2, size - 2, 0, 0, 32, 32, 32, 32);
-        if (active) {
-            guiGraphics.renderOutline(x - 1, y - 1, size + 2, size + 2, HIGHLIGHT_COLOR);
-        }
     }
 
     private void renderTabs(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -263,14 +261,13 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             int y = this.topPos + relY;
             boolean selected = tab.equals(currentTab);
             boolean hovered = this.isOver(mouseX, mouseY, GearscopeLayout.TAB_X, relY, GearscopeLayout.TAB_WIDTH, GearscopeLayout.TAB_HEIGHT);
-            guiGraphics.fill(x, y, x + GearscopeLayout.TAB_WIDTH, y + GearscopeLayout.TAB_HEIGHT,
-                    selected ? WIDGET_ACTIVE_COLOR : hovered ? WIDGET_HOVER_COLOR : WIDGET_COLOR);
+            int fill = selected ? GearscopeStyle.TAB_SELECTED_FILL : hovered ? GearscopeStyle.TAB_HOVER_FILL : GearscopeStyle.TAB_FILL;
+            guiGraphics.fill(x, y, x + GearscopeLayout.TAB_WIDTH, y + GearscopeLayout.TAB_HEIGHT, fill);
+            guiGraphics.renderOutline(x, y, GearscopeLayout.TAB_WIDTH, GearscopeLayout.TAB_HEIGHT,
+                    selected ? GearscopeStyle.TAB_SELECTED_BORDER : GearscopeStyle.TAB_BORDER);
             // Group icons are plain textures (assets/<ns>/textures/<icon>.png), drawn whole into 8x8
             // regardless of their actual size.
             guiGraphics.blit(this.tabIconTexture(tab), x + 1, y + 2, 8, 8, 0, 0, 1, 1, 1, 1);
-            if (selected) {
-                guiGraphics.renderOutline(x - 1, y - 1, GearscopeLayout.TAB_WIDTH + 2, GearscopeLayout.TAB_HEIGHT + 2, HIGHLIGHT_COLOR);
-            }
         }
 
         if (this.tabs.size() > GearscopeLayout.TABS_VISIBLE) {
@@ -292,8 +289,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         int width = GearscopeLayout.ARROW_WIDTH;
         int height = GearscopeLayout.ARROW_HEIGHT;
         boolean hovered = enabled && this.isOver(mouseX, mouseY, relX, relY, width, height);
-        guiGraphics.fill(x, y, x + width, y + height, hovered ? WIDGET_HOVER_COLOR : WIDGET_COLOR);
-        int color = enabled ? ARROW_COLOR : ARROW_DISABLED_COLOR;
+        int color = !enabled ? GearscopeStyle.ARROW_DISABLED : hovered ? GearscopeStyle.ARROW_HOVER : GearscopeStyle.ARROW;
         int centerX = x + width / 2;
         int centerY = y + height / 2;
         // Small 3-pixel triangles.
@@ -366,10 +362,6 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             ResourceLocation texture = icon.withPath(path -> "textures/" + path + ".png");
             return this.minecraft.getResourceManager().getResource(texture).isPresent() ? texture : TAB_UNKNOWN_ICON;
         });
-    }
-
-    private static void fillPlaceholder(GuiGraphics guiGraphics, int left, int top, int x1, int y1, int x2, int y2) {
-        guiGraphics.fill(left + x1, top + y1, left + x2, top + y2, PLACEHOLDER_COLOR);
     }
 
     // --- Input ---
