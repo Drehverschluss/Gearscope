@@ -4,6 +4,8 @@ import com.drehverschluss.gearscope.client.GearscopeClientConfig;
 import com.drehverschluss.gearscope.client.GearscopeKeyMappings;
 import com.drehverschluss.gearscope.client.GearscopeScreen;
 import com.drehverschluss.gearscope.client.GearscopeSlotPlacer;
+import com.drehverschluss.gearscope.client.GuiScaleOverride;
+import com.drehverschluss.gearscope.client.LayoutLoader;
 import com.drehverschluss.gearscope.client.SlotPlacesLoader;
 import com.drehverschluss.gearscope.client.attributes.AttributeGroupsLoader;
 import com.drehverschluss.gearscope.compat.apothic.ApothicCompat;
@@ -34,6 +36,8 @@ public class GearscopeClient {
         modEventBus.addListener(GearscopeClient::onRegisterMenuScreens);
         modEventBus.addListener(GearscopeClient::onRegisterReloadListeners);
         NeoForge.EVENT_BUS.addListener(GearscopeKeyMappings::handleClientTick);
+        NeoForge.EVENT_BUS.addListener(GuiScaleOverride::onClientTick);
+        NeoForge.EVENT_BUS.addListener(GuiScaleOverride::onLoggingOut);
     }
 
     private static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
@@ -41,6 +45,7 @@ public class GearscopeClient {
     }
 
     private static void onRegisterReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new LayoutLoader());
         event.registerReloadListener(new SlotPlacesLoader());
         event.registerReloadListener(new AttributeGroupsLoader());
     }

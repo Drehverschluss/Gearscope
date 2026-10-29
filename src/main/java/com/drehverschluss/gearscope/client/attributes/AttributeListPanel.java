@@ -75,6 +75,7 @@ public final class AttributeListPanel {
 
     private final Minecraft minecraft = Minecraft.getInstance();
     private final Font font = this.minecraft.font;
+    private final GearscopeLayout layout;
     private final Map<ResourceLocation, Optional<ResourceLocation>> iconCache = new HashMap<>();
     private List<Row> rows = List.of();
     // Top of every row relative to the list start (group gaps included), same order as rows.
@@ -84,7 +85,8 @@ public final class AttributeListPanel {
     private int tickCounter;
     private boolean draggingScrollbar;
 
-    public AttributeListPanel() {
+    public AttributeListPanel(GearscopeLayout layout) {
+        this.layout = layout;
         this.rebuild();
     }
 
@@ -144,17 +146,17 @@ public final class AttributeListPanel {
 
             boolean collapsed = GearscopeClientConfig.isCollapsed(groupId);
             if (!newRows.isEmpty()) {
-                height += GearscopeLayout.ATTR_GROUP_GAP;
+                height += this.layout.attrGroupGap;
             }
             newRows.add(new HeaderRow(groupId, groupName(groupId), collapsed));
             tops.add(height);
-            height += GearscopeLayout.ATTR_HEADER_HEIGHT;
+            height += this.layout.attrHeaderHeight;
             if (!collapsed) {
                 for (AttributeInstance instance : instances) {
                     AttributeNameIcons.Split name = names.get(instance);
                     newRows.add(new AttributeRow(instance, name.name(), name.icon(), this.icon(instance.getAttribute())));
                     tops.add(height);
-                    height += GearscopeLayout.ATTR_ROW_HEIGHT;
+                    height += this.layout.attrRowHeight;
                 }
             }
         }
@@ -231,14 +233,14 @@ public final class AttributeListPanel {
         if (player == null) {
             return;
         }
-        int x1 = left + GearscopeLayout.SCROLL_X1;
-        int x2 = left + GearscopeLayout.SCROLL_X2;
-        int titleY = top + GearscopeLayout.ATTR_TITLE_Y;
-        int listTop = top + GearscopeLayout.ATTR_LIST_Y;
-        int listBottom = top + GearscopeLayout.SCROLL_Y2;
+        int x1 = left + this.layout.scrollX1;
+        int x2 = left + this.layout.scrollX2;
+        int titleY = top + this.layout.attrTitleY;
+        int listTop = top + this.layout.attrListY;
+        int listBottom = top + this.layout.scrollY2;
 
         guiGraphics.drawString(this.font, Component.translatable("gearscope.attributes.title"), x1, titleY + 2, COLOR_HEADER, false);
-        this.renderCheckbox(guiGraphics, x2 - GearscopeLayout.ATTR_CHECKBOX_SIZE, titleY + 2, GearscopeClientConfig.HIDE_UNCHANGED.get());
+        this.renderCheckbox(guiGraphics, x2 - this.layout.attrCheckboxSize, titleY + 2, GearscopeClientConfig.HIDE_UNCHANGED.get());
 
         int contentRight = this.contentRight(x2);
         Row hovered = this.rowAt(left, top, mouseX, mouseY);
@@ -247,7 +249,7 @@ public final class AttributeListPanel {
         boolean first = true;
         for (Row row : this.rows) {
             if (row instanceof HeaderRow && !first) {
-                y += GearscopeLayout.ATTR_GROUP_GAP;
+                y += this.layout.attrGroupGap;
             }
             first = false;
             int height = rowHeight(row);
@@ -266,7 +268,7 @@ public final class AttributeListPanel {
         guiGraphics.disableScissor();
 
         if (this.isScrollbarVisible()) {
-            int trackX = x2 - GearscopeLayout.ATTR_SCROLLBAR_WIDTH;
+            int trackX = x2 - this.layout.attrScrollbarWidth;
             guiGraphics.fill(trackX, listTop, x2, listBottom, COLOR_SCROLLBAR_TRACK);
             int thumbHeight = this.thumbHeight();
             int thumbY = listTop + (int) ((long) (this.listHeight() - thumbHeight) * scrollRow / Math.max(1, this.maxScrollRow));
@@ -275,7 +277,7 @@ public final class AttributeListPanel {
     }
 
     private void renderCheckbox(GuiGraphics guiGraphics, int x, int y, boolean checked) {
-        int size = GearscopeLayout.ATTR_CHECKBOX_SIZE;
+        int size = this.layout.attrCheckboxSize;
         guiGraphics.renderOutline(x, y, size, size, COLOR_CHECKBOX);
         if (checked) {
             // Small check mark.
@@ -310,7 +312,7 @@ public final class AttributeListPanel {
         Attribute attribute = instance.getAttribute().value();
         // Icon column: the attribute_icon texture, otherwise the glyph an icon pack put into the name.
         if (row.icon() != null) {
-            int size = GearscopeLayout.ATTR_ICON_SIZE;
+            int size = this.layout.attrIconSize;
             guiGraphics.blit(row.icon(), x1, y, size, size, 0, 0, 1, 1, 1, 1);
         } else if (row.nameIcon() != null) {
             guiGraphics.drawString(this.font, Language.getInstance().getVisualOrder(row.nameIcon()), x1, y + 1, COLOR_TEXT, false);
@@ -324,7 +326,7 @@ public final class AttributeListPanel {
                 valueColor(attribute, instance.getValue(), instance.getBaseValue()), false);
 
         // Every name starts at the same x; too long names end with an ellipsis.
-        int nameX = x1 + GearscopeLayout.ATTR_ICON_SIZE + 2;
+        int nameX = x1 + this.layout.attrIconSize + 2;
         int maxNameWidth = contentRight - valueWidth - 4 - nameX;
         FormattedText name = row.name();
         if (this.font.width(name) > maxNameWidth) {
@@ -376,12 +378,12 @@ public final class AttributeListPanel {
 
     // --- Layout helpers ---
 
-    private static int rowHeight(Row row) {
-        return row instanceof HeaderRow ? GearscopeLayout.ATTR_HEADER_HEIGHT : GearscopeLayout.ATTR_ROW_HEIGHT;
+    private int rowHeight(Row row) {
+        return row instanceof HeaderRow ? this.layout.attrHeaderHeight : this.layout.attrRowHeight;
     }
 
     private int listHeight() {
-        return GearscopeLayout.SCROLL_Y2 - GearscopeLayout.ATTR_LIST_Y;
+        return this.layout.scrollY2 - this.layout.attrListY;
     }
 
     private boolean isScrollbarVisible() {
@@ -394,41 +396,41 @@ public final class AttributeListPanel {
     }
 
     private int contentRight(int x2) {
-        return this.isScrollbarVisible() ? x2 - GearscopeLayout.ATTR_SCROLLBAR_WIDTH - 2 : x2;
+        return this.isScrollbarVisible() ? x2 - this.layout.attrScrollbarWidth - 2 : x2;
     }
 
     public boolean isMouseOver(int left, int top, double mouseX, double mouseY) {
-        return mouseX >= left + GearscopeLayout.SCROLL_X1 && mouseX < left + GearscopeLayout.SCROLL_X2
-                && mouseY >= top + GearscopeLayout.SCROLL_Y1 && mouseY < top + GearscopeLayout.SCROLL_Y2;
+        return mouseX >= left + this.layout.scrollX1 && mouseX < left + this.layout.scrollX2
+                && mouseY >= top + this.layout.scrollY1 && mouseY < top + this.layout.scrollY2;
     }
 
     private boolean isOverList(int left, int top, double mouseX, double mouseY) {
-        return mouseX >= left + GearscopeLayout.SCROLL_X1 && mouseX < left + GearscopeLayout.SCROLL_X2
-                && mouseY >= top + GearscopeLayout.ATTR_LIST_Y && mouseY < top + GearscopeLayout.SCROLL_Y2;
+        return mouseX >= left + this.layout.scrollX1 && mouseX < left + this.layout.scrollX2
+                && mouseY >= top + this.layout.attrListY && mouseY < top + this.layout.scrollY2;
     }
 
     private boolean isOverCheckbox(int left, int top, double mouseX, double mouseY) {
-        int size = GearscopeLayout.ATTR_CHECKBOX_SIZE;
-        int x = left + GearscopeLayout.SCROLL_X2 - size;
-        int y = top + GearscopeLayout.ATTR_TITLE_Y + 2;
+        int size = this.layout.attrCheckboxSize;
+        int x = left + this.layout.scrollX2 - size;
+        int y = top + this.layout.attrTitleY + 2;
         return mouseX >= x - 1 && mouseX < x + size + 1 && mouseY >= y - 1 && mouseY < y + size + 1;
     }
 
     private boolean isOverScrollbar(int left, int top, double mouseX, double mouseY) {
         return this.isScrollbarVisible() && this.isOverList(left, top, mouseX, mouseY)
-                && mouseX >= left + GearscopeLayout.SCROLL_X2 - GearscopeLayout.ATTR_SCROLLBAR_WIDTH - 1;
+                && mouseX >= left + this.layout.scrollX2 - this.layout.attrScrollbarWidth - 1;
     }
 
     @Nullable
     private Row rowAt(int left, int top, double mouseX, double mouseY) {
-        if (!this.isOverList(left, top, mouseX, mouseY) || mouseX >= this.contentRight(left + GearscopeLayout.SCROLL_X2)) {
+        if (!this.isOverList(left, top, mouseX, mouseY) || mouseX >= this.contentRight(left + this.layout.scrollX2)) {
             return null;
         }
-        int y = top + GearscopeLayout.ATTR_LIST_Y - this.scrollPixels();
+        int y = top + this.layout.attrListY - this.scrollPixels();
         boolean first = true;
         for (Row row : this.rows) {
             if (row instanceof HeaderRow && !first) {
-                y += GearscopeLayout.ATTR_GROUP_GAP;
+                y += this.layout.attrGroupGap;
             }
             first = false;
             int height = rowHeight(row);
@@ -487,7 +489,7 @@ public final class AttributeListPanel {
 
     private void scrollToMouse(int top, double mouseY) {
         int thumbHeight = this.thumbHeight();
-        double trackStart = top + GearscopeLayout.ATTR_LIST_Y + thumbHeight / 2.0;
+        double trackStart = top + this.layout.attrListY + thumbHeight / 2.0;
         double trackLength = Math.max(1, this.listHeight() - thumbHeight);
         double fraction = Mth.clamp((mouseY - trackStart) / trackLength, 0, 1);
         scrollRow = (int) Math.round(fraction * this.maxScrollRow);

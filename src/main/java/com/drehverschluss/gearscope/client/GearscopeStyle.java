@@ -8,11 +8,8 @@ import net.minecraft.resources.ResourceLocation;
  * can be replaced by resource packs.
  */
 public final class GearscopeStyle {
-    // Painted background, 3x the 480x270 GUI size; drawn scaled with linear filtering.
-    public static final ResourceLocation BACKGROUND = Gearscope.id("textures/gui/background.png");
-    public static final int BACKGROUND_TEXTURE_WIDTH = 1440;
-    public static final int BACKGROUND_TEXTURE_HEIGHT = 810;
-    // 18x18 pixel-art slot frames (semi-transparent), drawn 1:1 without filtering.
+    // 18x18 pixel-art slot frames (semi-transparent), drawn 1:1 without filtering. The background texture
+    // and its size are part of layout.json.
     public static final ResourceLocation SLOT = Gearscope.id("textures/gui/slot.png");
     public static final ResourceLocation SLOT_COSMETIC = Gearscope.id("textures/gui/slot_cosmetic.png");
     public static final int SLOT_TEXTURE_SIZE = 18;

@@ -9,12 +9,19 @@ import net.neoforged.neoforge.common.ModConfigSpec;
  */
 public final class GearscopeClientConfig {
     public static final ModConfigSpec SPEC;
+    public static final ModConfigSpec.BooleanValue AUTO_SCALE;
     public static final ModConfigSpec.BooleanValue HIDE_UNCHANGED;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> COLLAPSED_GROUPS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> HIDDEN_ATTRIBUTES;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        builder.comment("The Gearscope screen").push("screen");
+        AUTO_SCALE = builder
+                .comment("Temporarily lower the GUI scale while Gearscope is open if the screen does not fit the window",
+                        "at the current scale (the saved GUI scale option is never changed)")
+                .define("autoScale", true);
+        builder.pop();
         builder.comment("Attribute list on the Gearscope screen").push("attributes");
         HIDE_UNCHANGED = builder
                 .comment("Only show attributes whose value differs from their base value")

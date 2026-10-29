@@ -97,14 +97,16 @@ public class GearscopeMenu extends AbstractContainerMenu {
         this.craftSlots = new TransientCraftingContainer(this, 2, 2);
         this.resultSlots = new ResultContainer();
         this.accessorySpecs = List.copyOf(accessorySpecs);
+        // Slot positions only matter on the client (layout.json there); the server uses the defaults.
+        GearscopeLayout layout = GearscopeLayout.current();
 
         // a) Crafting result + 2x2 grid.
         this.addSlot(new ResultSlot(this.player, this.craftSlots, this.resultSlots, 0,
-                GearscopeLayout.RESULT_X, GearscopeLayout.RESULT_Y));
+                layout.resultX, layout.resultY));
         for (int row = 0; row < 2; row++) {
             for (int col = 0; col < 2; col++) {
                 this.addSlot(new Slot(this.craftSlots, col + row * 2,
-                        GearscopeLayout.CRAFT_X[col], GearscopeLayout.CRAFT_Y[row]));
+                        layout.craftX[col], layout.craftY[row]));
             }
         }
 
@@ -115,11 +117,11 @@ public class GearscopeMenu extends AbstractContainerMenu {
             EquipmentSlot equipmentSlot = ARMOR_ORDER[i];
             int containerSlot = Inventory.INVENTORY_SIZE + equipmentSlot.getIndex();
             this.armorSlots.add(this.addSlot(new ToggleableArmorSlot(playerInventory, this.player, equipmentSlot, containerSlot,
-                    GearscopeLayout.ARMOR_X, GearscopeLayout.ARMOR_Y[i], ARMOR_EMPTY_ICONS[i])));
+                    layout.armorX, layout.armorY[i], ARMOR_EMPTY_ICONS[i])));
         }
 
         // c) Offhand, mirroring the anonymous slot InventoryMenu uses for the shield slot.
-        this.addSlot(new Slot(playerInventory, Inventory.SLOT_OFFHAND, GearscopeLayout.OFFHAND_X, GearscopeLayout.OFFHAND_Y) {
+        this.addSlot(new Slot(playerInventory, Inventory.SLOT_OFFHAND, layout.offhandX, layout.offhandY) {
             @Override
             public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
                 player.onEquipItem(EquipmentSlot.OFFHAND, oldStack, newStack);
@@ -136,14 +138,14 @@ public class GearscopeMenu extends AbstractContainerMenu {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 this.addSlot(new Slot(playerInventory, col + row * 9 + 9,
-                        GearscopeLayout.INV_X + col * GearscopeLayout.INV_SLOT_SIZE, GearscopeLayout.INV_ROW_Y[row]));
+                        layout.inventoryX + col * layout.slotStep, layout.inventoryRowY[row]));
             }
         }
 
         // e) Hotbar.
         for (int col = 0; col < 9; col++) {
             this.addSlot(new Slot(playerInventory, col,
-                    GearscopeLayout.INV_X + col * GearscopeLayout.INV_SLOT_SIZE, GearscopeLayout.HOTBAR_Y));
+                    layout.inventoryX + col * layout.slotStep, layout.hotbarY));
         }
 
         // f) Accessories: functional + cosmetic slot per slot index.
@@ -153,7 +155,7 @@ public class GearscopeMenu extends AbstractContainerMenu {
             AccessorySlotSource source = GearscopeServices.slotSource();
             for (int i = 0; i < ARMOR_ORDER.length; i++) {
                 this.cosmeticArmorSlots.add(this.addSlot(source.createCosmeticArmorSlot(
-                        this.player, ARMOR_ORDER[i], GearscopeLayout.ARMOR_X, GearscopeLayout.ARMOR_Y[i])));
+                        this.player, ARMOR_ORDER[i], layout.armorX, layout.armorY[i])));
             }
         }
         this.accessorySlotEnd = this.slots.size();

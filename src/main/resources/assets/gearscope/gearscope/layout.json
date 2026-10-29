@@ -1,0 +1,39 @@
+{
+  "screen": { "width": 480, "height": 270 },
+  "background": {
+    "texture": "gearscope:textures/gui/background.png",
+    "texture_width": 1440,
+    "texture_height": 810
+  },
+  "armor": { "x": 27, "y": [24, 42, 60, 78] },
+  "offhand": { "x": 27, "y": 96 },
+  "inventory": { "x": 77, "row_y": [163, 181, 199], "slot_step": 18 },
+  "hotbar": { "y": 221 },
+  "crafting": { "x": [243, 261], "y": [171, 189], "result_x": 252, "result_y": 213, "arrow_y": 207 },
+  "places": {
+    "body_left_top": [103, 62],
+    "body_right_top": [183, 62],
+    "body_left_mid": [103, 88],
+    "body_right_mid": [183, 88],
+    "body_left_low": [103, 112],
+    "body_right_low": [183, 112],
+    "strip_left_6": [27, 114],
+    "strip_right_1": [256, 24],
+    "strip_right_2": [256, 42],
+    "strip_right_3": [256, 60],
+    "strip_right_4": [256, 78],
+    "strip_right_5": [256, 96],
+    "strip_right_6": [256, 114]
+  },
+  "tabs": {
+    "x": 25, "y": 169, "step": 13, "width": 11, "height": 12, "visible": 5,
+    "scroll_up_y": 160, "arrow_width": 11, "arrow_height": 7
+  },
+  "tab_slots": { "x": [38, 56], "y": 165, "step": 18, "rows": 4, "page_prev_x": 38, "page_next_x": 62 },
+  "cosmetic_button": { "x": 62, "y": 20, "size": 12 },
+  "player": { "center_x": 151, "feet_y": 126, "scale": 40, "box_width": 80, "box_height": 100, "y_offset": 0.0625 },
+  "attributes": {
+    "x1": 315, "y1": 27, "x2": 449, "y2": 233, "list_y": 40,
+    "checkbox_size": 8, "scrollbar_width": 3, "header_height": 11, "row_height": 10, "group_gap": 3, "icon_size": 9
+  }
+}

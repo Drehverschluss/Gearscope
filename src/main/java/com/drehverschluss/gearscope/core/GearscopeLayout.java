@@ -1,152 +1,275 @@
 package com.drehverschluss.gearscope.core;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
 
 /**
- * Pixel layout constants for the Gearscope screen (480x270 GUI pixels), taken from Gearscope-Konzept.md
- * section 3.2. This is the single source of truth for slot and placeholder positions in Phase 1; Phase 4
- * will move these values into a resourcepack layout.json instead.
+ * All positions of the Gearscope screen in GUI pixels, relative to its top-left corner. The client loads them
+ * from assets/gearscope/gearscope/layout.json (resource packs can override it, see docs/layout.md); every
+ * value missing there falls back to the built-in default below. The server only ever uses the defaults, slot
+ * positions do not matter there.
  */
 public final class GearscopeLayout {
-    private GearscopeLayout() {
-    }
-
-    public static final int SCREEN_WIDTH = 480;
-    public static final int SCREEN_HEIGHT = 270;
-
-    // Left/right sidebar placeholder areas (6 slots tall, only the left one is used in Phase 1 for
-    // armor + offhand; the rest is reserved for Accessories in Phase 2).
-    public static final int SIDEBAR_SLOT_SIZE = 18;
-    public static final int SIDEBAR_SLOT_COUNT = 6;
-    public static final int SIDEBAR_TOP_Y = 24;
-    public static final int SIDEBAR_LEFT_X = 27;
-    public static final int SIDEBAR_RIGHT_X = 256;
-    private static final int SIDEBAR_HEIGHT = SIDEBAR_SLOT_COUNT * SIDEBAR_SLOT_SIZE;
-    public static final int SIDEBAR_LEFT_X1 = SIDEBAR_LEFT_X - 8;
-    public static final int SIDEBAR_LEFT_Y1 = SIDEBAR_TOP_Y - 8;
-    public static final int SIDEBAR_LEFT_X2 = SIDEBAR_LEFT_X + SIDEBAR_SLOT_SIZE + 8;
-    public static final int SIDEBAR_LEFT_Y2 = SIDEBAR_TOP_Y + SIDEBAR_HEIGHT + 8;
-    public static final int SIDEBAR_RIGHT_X1 = SIDEBAR_RIGHT_X - 8;
-    public static final int SIDEBAR_RIGHT_Y1 = SIDEBAR_TOP_Y - 8;
-    public static final int SIDEBAR_RIGHT_X2 = SIDEBAR_RIGHT_X + SIDEBAR_SLOT_SIZE + 8;
-    public static final int SIDEBAR_RIGHT_Y2 = SIDEBAR_TOP_Y + SIDEBAR_HEIGHT + 8;
-
-    // Niche (stage) the player figure stands in.
-    public static final int NICHE_X1 = 55;
-    public static final int NICHE_Y1 = 13;
-    public static final int NICHE_X2 = 247;
-    public static final int NICHE_Y2 = 143;
-
-    // Lower panel (inventory, hotbar, crafting).
-    public static final int LOWER_PANEL_X1 = 22;
-    public static final int LOWER_PANEL_Y1 = 157;
-    public static final int LOWER_PANEL_X2 = 282;
-    public static final int LOWER_PANEL_Y2 = 246;
-
-    // Attribute scroll area (text area of the scroll; background is still a placeholder until Phase 4).
-    public static final int SCROLL_X1 = 315;
-    public static final int SCROLL_Y1 = 27;
-    public static final int SCROLL_X2 = 449;
-    public static final int SCROLL_Y2 = 233;
-    // Inside it: a title row (title + "hide unchanged" checkbox), then the scrolling list.
-    public static final int ATTR_TITLE_Y = SCROLL_Y1;
-    public static final int ATTR_CHECKBOX_SIZE = 8;
-    public static final int ATTR_LIST_Y = SCROLL_Y1 + 13;
-    public static final int ATTR_SCROLLBAR_WIDTH = 3;
-    public static final int ATTR_HEADER_HEIGHT = 11;
-    public static final int ATTR_ROW_HEIGHT = 10;
-    public static final int ATTR_GROUP_GAP = 3;
-    public static final int ATTR_ICON_SIZE = 9;
-
-    // Armor (head, chest, legs, feet, top to bottom) and offhand, left sidebar.
-    public static final int ARMOR_X = 27;
-    public static final int[] ARMOR_Y = {24, 42, 60, 78};
-    public static final int OFFHAND_X = 27;
-    public static final int OFFHAND_Y = 96;
-
-    // Inventory (3x9) and hotbar.
-    public static final int INV_X = 77;
-    public static final int INV_SLOT_SIZE = 18;
-    public static final int[] INV_ROW_Y = {163, 181, 199};
-    public static final int HOTBAR_Y = 221;
-
-    // 2x2 crafting grid and its result slot.
-    public static final int[] CRAFT_X = {243, 261};
-    public static final int[] CRAFT_Y = {171, 189};
-    public static final int RESULT_X = 252;
-    public static final int RESULT_Y = 213;
-    // Top of the small arrow pointing from the grid down to the result.
-    public static final int CRAFT_ARROW_Y = 207;
-
-    // Player figure in the niche: a fixed-size box passed to
-    // InventoryScreen.renderEntityInInventoryFollowsMouse. Center x=151, feet at approx. y=122.
-    // Starting values only; fine-tuning happens in-game (Phase 4 adds screen scaling for small windows).
-    public static final int PLAYER_RENDER_X1 = 116;
-    public static final int PLAYER_RENDER_Y1 = 22;
-    public static final int PLAYER_RENDER_X2 = 186;
-    public static final int PLAYER_RENDER_Y2 = 122;
-    public static final int PLAYER_RENDER_SCALE = 30;
-    public static final float PLAYER_RENDER_Y_OFFSET = 0.0625F;
-
     /** A named fixed position for an accessory slot (top-left of the 16x16 item area). */
     public record Place(String name, int x, int y) {
     }
 
-    // Named accessory places, in shift-click priority order: body places first, then the sidebars.
-    // Which slot type goes where comes from assets/gearscope/gearscope/slot_places.json.
-    public static final List<Place> PLACES = List.of(
-            new Place("body_left_top", 105, 42),
-            new Place("body_right_top", 179, 42),
-            new Place("body_left_mid", 105, 64),
-            new Place("body_right_mid", 179, 64),
-            new Place("body_left_low", 105, 86),
-            new Place("body_right_low", 179, 86),
-            new Place("strip_left_6", 27, 114),
-            new Place("strip_right_1", 256, 24),
-            new Place("strip_right_2", 256, 42),
-            new Place("strip_right_3", 256, 60),
-            new Place("strip_right_4", 256, 78),
-            new Place("strip_right_5", 256, 96),
-            new Place("strip_right_6", 256, 114));
+    /** Mutable values used to build a layout; starts with the defaults. */
+    public static final class Builder {
+        public int screenWidth = 480;
+        public int screenHeight = 270;
 
-    private static final Map<String, Place> PLACES_BY_NAME =
-            PLACES.stream().collect(Collectors.toUnmodifiableMap(Place::name, Function.identity()));
+        public ResourceLocation backgroundTexture = ResourceLocation.fromNamespaceAndPath("gearscope", "textures/gui/background.png");
+        public int backgroundTextureWidth = 1440;
+        public int backgroundTextureHeight = 810;
 
-    @Nullable
-    public static Place place(String name) {
-        return PLACES_BY_NAME.get(name);
+        public int armorX = 27;
+        public int[] armorY = {24, 42, 60, 78};
+        public int offhandX = 27;
+        public int offhandY = 96;
+
+        public int inventoryX = 77;
+        public int[] inventoryRowY = {163, 181, 199};
+        public int slotStep = 18;
+        public int hotbarY = 221;
+
+        public int[] craftX = {243, 261};
+        public int[] craftY = {171, 189};
+        public int resultX = 252;
+        public int resultY = 213;
+        public int craftArrowY = 207;
+
+        // Shift-click priority follows this order: body places first, then the sidebars.
+        public final LinkedHashMap<String, int[]> places = new LinkedHashMap<>();
+
+        public int tabX = 25;
+        public int tabY = 169;
+        public int tabStep = 13;
+        public int tabWidth = 11;
+        public int tabHeight = 12;
+        public int tabsVisible = 5;
+        public int tabScrollUpY = 160;
+        public int arrowWidth = 11;
+        public int arrowHeight = 7;
+        public int[] tabSlotX = {38, 56};
+        public int tabSlotY = 165;
+        public int tabSlotStep = 18;
+        public int tabSlotRows = 4;
+        public int pagePrevX = 38;
+        public int pageNextX = 62;
+
+        public int cosmeticButtonX = 62;
+        public int cosmeticButtonY = 20;
+        public int cosmeticButtonSize = 12;
+
+        // Player figure: horizontal center, where its feet stand, render scale and the clipping box around it.
+        public int playerCenterX = 151;
+        public int playerFeetY = 126;
+        public int playerScale = 40;
+        public int playerBoxWidth = 80;
+        public int playerBoxHeight = 100;
+        public float playerYOffset = 0.0625F;
+
+        public int scrollX1 = 315;
+        public int scrollY1 = 27;
+        public int scrollX2 = 449;
+        public int scrollY2 = 233;
+        public int attrListY = 40;
+        public int attrCheckboxSize = 8;
+        public int attrScrollbarWidth = 3;
+        public int attrHeaderHeight = 11;
+        public int attrRowHeight = 10;
+        public int attrGroupGap = 3;
+        public int attrIconSize = 9;
+
+        public Builder() {
+            this.places.put("body_left_top", new int[] {103, 62});
+            this.places.put("body_right_top", new int[] {183, 62});
+            this.places.put("body_left_mid", new int[] {103, 88});
+            this.places.put("body_right_mid", new int[] {183, 88});
+            this.places.put("body_left_low", new int[] {103, 112});
+            this.places.put("body_right_low", new int[] {183, 112});
+            this.places.put("strip_left_6", new int[] {27, 114});
+            this.places.put("strip_right_1", new int[] {256, 24});
+            this.places.put("strip_right_2", new int[] {256, 42});
+            this.places.put("strip_right_3", new int[] {256, 60});
+            this.places.put("strip_right_4", new int[] {256, 78});
+            this.places.put("strip_right_5", new int[] {256, 96});
+            this.places.put("strip_right_6", new int[] {256, 114});
+        }
+
+        public GearscopeLayout build() {
+            return new GearscopeLayout(this);
+        }
     }
 
-    // Group tabs: vertical bookmarks left of the inventory.
-    public static final int TAB_X = 25;
-    public static final int TAB_Y = 169;
-    public static final int TAB_STEP = 13;
-    public static final int TAB_WIDTH = 11;
-    public static final int TAB_HEIGHT = 12;
-    public static final int TABS_VISIBLE = 5;
-    // Arrows to scroll the tab column when there are more than TABS_VISIBLE tabs.
-    public static final int TAB_SCROLL_UP_Y = 160;
-    public static final int TAB_SCROLL_DOWN_Y = TAB_Y + TABS_VISIBLE * TAB_STEP;
-    public static final int ARROW_WIDTH = 11;
-    public static final int ARROW_HEIGHT = 7;
+    public static final GearscopeLayout DEFAULT = new Builder().build();
 
-    // Slots of the selected tab: 2 columns x 4 rows per page.
-    public static final int[] TAB_SLOT_X = {38, 56};
-    public static final int TAB_SLOT_Y = 165;
-    public static final int TAB_SLOT_STEP = 18;
-    public static final int TAB_SLOT_ROWS = 4;
-    public static final int TAB_SLOTS_PER_PAGE = TAB_SLOT_X.length * TAB_SLOT_ROWS;
-    // Page arrows below the tab slots when a tab has more than TAB_SLOTS_PER_PAGE slots.
-    public static final int PAGE_PREV_X = 38;
-    public static final int PAGE_NEXT_X = 62;
-    public static final int PAGE_ARROW_Y = TAB_SLOT_Y + TAB_SLOT_ROWS * TAB_SLOT_STEP + 1;
+    private static volatile GearscopeLayout current = DEFAULT;
 
-    // Cosmetic toggle, top left of the niche.
-    public static final int COSMETIC_BUTTON_X = 62;
-    public static final int COSMETIC_BUTTON_Y = 20;
-    public static final int COSMETIC_BUTTON_SIZE = 12;
+    /** The active layout (the client's layout.json, otherwise the defaults). */
+    public static GearscopeLayout current() {
+        return current;
+    }
+
+    public static void setCurrent(GearscopeLayout layout) {
+        current = layout;
+    }
+
+    public final int screenWidth;
+    public final int screenHeight;
+    public final ResourceLocation backgroundTexture;
+    public final int backgroundTextureWidth;
+    public final int backgroundTextureHeight;
+    public final int armorX;
+    public final int[] armorY;
+    public final int offhandX;
+    public final int offhandY;
+    public final int inventoryX;
+    public final int[] inventoryRowY;
+    public final int slotStep;
+    public final int hotbarY;
+    public final int[] craftX;
+    public final int[] craftY;
+    public final int resultX;
+    public final int resultY;
+    public final int craftArrowY;
+    public final List<Place> places;
+    private final Map<String, Place> placesByName;
+    public final int tabX;
+    public final int tabY;
+    public final int tabStep;
+    public final int tabWidth;
+    public final int tabHeight;
+    public final int tabsVisible;
+    public final int tabScrollUpY;
+    public final int tabScrollDownY;
+    public final int arrowWidth;
+    public final int arrowHeight;
+    public final int[] tabSlotX;
+    public final int tabSlotY;
+    public final int tabSlotStep;
+    public final int tabSlotRows;
+    public final int tabSlotsPerPage;
+    public final int pagePrevX;
+    public final int pageNextX;
+    public final int pageArrowY;
+    public final int cosmeticButtonX;
+    public final int cosmeticButtonY;
+    public final int cosmeticButtonSize;
+    public final int playerCenterX;
+    public final int playerFeetY;
+    public final int playerScale;
+    public final int playerBoxWidth;
+    public final int playerBoxHeight;
+    public final float playerYOffset;
+    public final int scrollX1;
+    public final int scrollY1;
+    public final int scrollX2;
+    public final int scrollY2;
+    public final int attrTitleY;
+    public final int attrListY;
+    public final int attrCheckboxSize;
+    public final int attrScrollbarWidth;
+    public final int attrHeaderHeight;
+    public final int attrRowHeight;
+    public final int attrGroupGap;
+    public final int attrIconSize;
+
+    private GearscopeLayout(Builder b) {
+        this.screenWidth = b.screenWidth;
+        this.screenHeight = b.screenHeight;
+        this.backgroundTexture = b.backgroundTexture;
+        this.backgroundTextureWidth = b.backgroundTextureWidth;
+        this.backgroundTextureHeight = b.backgroundTextureHeight;
+        this.armorX = b.armorX;
+        this.armorY = b.armorY.clone();
+        this.offhandX = b.offhandX;
+        this.offhandY = b.offhandY;
+        this.inventoryX = b.inventoryX;
+        this.inventoryRowY = b.inventoryRowY.clone();
+        this.slotStep = b.slotStep;
+        this.hotbarY = b.hotbarY;
+        this.craftX = b.craftX.clone();
+        this.craftY = b.craftY.clone();
+        this.resultX = b.resultX;
+        this.resultY = b.resultY;
+        this.craftArrowY = b.craftArrowY;
+
+        List<Place> placeList = new ArrayList<>();
+        Map<String, Place> byName = new LinkedHashMap<>();
+        b.places.forEach((name, position) -> {
+            Place place = new Place(name, position[0], position[1]);
+            placeList.add(place);
+            byName.put(name, place);
+        });
+        this.places = List.copyOf(placeList);
+        this.placesByName = Map.copyOf(byName);
+
+        this.tabX = b.tabX;
+        this.tabY = b.tabY;
+        this.tabStep = b.tabStep;
+        this.tabWidth = b.tabWidth;
+        this.tabHeight = b.tabHeight;
+        this.tabsVisible = b.tabsVisible;
+        this.tabScrollUpY = b.tabScrollUpY;
+        this.tabScrollDownY = b.tabY + b.tabsVisible * b.tabStep;
+        this.arrowWidth = b.arrowWidth;
+        this.arrowHeight = b.arrowHeight;
+        this.tabSlotX = b.tabSlotX.clone();
+        this.tabSlotY = b.tabSlotY;
+        this.tabSlotStep = b.tabSlotStep;
+        this.tabSlotRows = b.tabSlotRows;
+        this.tabSlotsPerPage = b.tabSlotX.length * b.tabSlotRows;
+        this.pagePrevX = b.pagePrevX;
+        this.pageNextX = b.pageNextX;
+        this.pageArrowY = b.tabSlotY + b.tabSlotRows * b.tabSlotStep + 1;
+        this.cosmeticButtonX = b.cosmeticButtonX;
+        this.cosmeticButtonY = b.cosmeticButtonY;
+        this.cosmeticButtonSize = b.cosmeticButtonSize;
+        this.playerCenterX = b.playerCenterX;
+        this.playerFeetY = b.playerFeetY;
+        this.playerScale = b.playerScale;
+        this.playerBoxWidth = b.playerBoxWidth;
+        this.playerBoxHeight = b.playerBoxHeight;
+        this.playerYOffset = b.playerYOffset;
+        this.scrollX1 = b.scrollX1;
+        this.scrollY1 = b.scrollY1;
+        this.scrollX2 = b.scrollX2;
+        this.scrollY2 = b.scrollY2;
+        this.attrTitleY = b.scrollY1;
+        this.attrListY = b.attrListY;
+        this.attrCheckboxSize = b.attrCheckboxSize;
+        this.attrScrollbarWidth = b.attrScrollbarWidth;
+        this.attrHeaderHeight = b.attrHeaderHeight;
+        this.attrRowHeight = b.attrRowHeight;
+        this.attrGroupGap = b.attrGroupGap;
+        this.attrIconSize = b.attrIconSize;
+    }
+
+    @Nullable
+    public Place place(String name) {
+        return this.placesByName.get(name);
+    }
+
+    /**
+     * Vertical center of the player render box. InventoryScreen draws the entity relative to the box center
+     * with its feet at center + scale * (0.9 + yOffset) for a standing player (half of 1.8 blocks), so the
+     * center follows from where the feet should stand.
+     */
+    public float playerCenterY() {
+        return this.playerFeetY - this.playerScale * (0.9F + this.playerYOffset);
+    }
+
+    public int playerBoxX1() {
+        return this.playerCenterX - this.playerBoxWidth / 2;
+    }
+
+    public int playerBoxY1() {
+        return Math.round(this.playerCenterY() - this.playerBoxHeight / 2.0F);
+    }
 }

@@ -40,22 +40,22 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     private enum Arrow { UP, DOWN, LEFT, RIGHT }
 
-    private static boolean warnedAboutSmallWindow = false;
-
+    // The layout this screen (and its menu's slot positions) was built with.
+    private final GearscopeLayout layout = GearscopeLayout.current();
     // Tabs (Accessories groups) that have at least one slot without a fixed place, in display order.
     private final List<String> tabs = new ArrayList<>();
     private final Map<String, Integer> tabSlotCounts = new HashMap<>();
     private final Map<String, ResourceLocation> tabIcons = new HashMap<>();
     private final boolean hasAccessories;
-    private final AttributeListPanel attributePanel = new AttributeListPanel();
+    private final AttributeListPanel attributePanel = new AttributeListPanel(this.layout);
 
     private float xMouse;
     private float yMouse;
 
     public GearscopeScreen(GearscopeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = GearscopeLayout.SCREEN_WIDTH;
-        this.imageHeight = GearscopeLayout.SCREEN_HEIGHT;
+        this.imageWidth = this.layout.screenWidth;
+        this.imageHeight = this.layout.screenHeight;
         this.hasAccessories = !menu.accessoryEntries().isEmpty();
 
         for (GearscopeMenu.AccessoryEntry entry : menu.accessoryEntries()) {
@@ -89,13 +89,18 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     @Override
     protected void init() {
+        // Lower the GUI scale while Gearscope is open if it would not fit (restored in removed()); the
+        // window size may have changed, so always use the current GUI size from here on.
+        GuiScaleOverride.apply(this.minecraft, this.imageWidth, this.imageHeight);
+        this.width = this.minecraft.getWindow().getGuiScaledWidth();
+        this.height = this.minecraft.getWindow().getGuiScaledHeight();
         super.init();
-        if (!warnedAboutSmallWindow && (this.width < this.imageWidth || this.height < this.imageHeight)) {
-            warnedAboutSmallWindow = true;
-            Gearscope.LOGGER.warn(
-                    "Gearscope screen ({}x{}) does not fit the window ({}x{} GUI pixels); scaling for small windows is added in Phase 4.",
-                    this.imageWidth, this.imageHeight, this.width, this.height);
-        }
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+        GuiScaleOverride.restore(this.minecraft);
     }
 
     // --- Accessory slot visibility ---
@@ -110,7 +115,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         }
         if (placement.isInTab()) {
             return placement.tab().equals(this.currentTab())
-                    && placement.tabPosition() / GearscopeLayout.TAB_SLOTS_PER_PAGE == this.currentPage(placement.tab());
+                    && placement.tabPosition() / this.layout.tabSlotsPerPage == this.currentPage(placement.tab());
         }
         return false;
     }
@@ -126,7 +131,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     private int pageCount(String tab) {
         int count = this.tabSlotCounts.getOrDefault(tab, 0);
-        return Math.max(1, Mth.positiveCeilDiv(count, GearscopeLayout.TAB_SLOTS_PER_PAGE));
+        return Math.max(1, Mth.positiveCeilDiv(count, this.layout.tabSlotsPerPage));
     }
 
     private int currentPage(String tab) {
@@ -134,7 +139,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     }
 
     private int maxTabScroll() {
-        return Math.max(0, this.tabs.size() - GearscopeLayout.TABS_VISIBLE);
+        return Math.max(0, this.tabs.size() - this.layout.tabsVisible);
     }
 
     /**
@@ -157,7 +162,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     private long quickMovePriority(GearscopeMenu.AccessoryEntry entry) {
         AccessoryPlacement placement = entry.placement();
         if (placement.isPlaced()) {
-            return GearscopeLayout.PLACES.indexOf(GearscopeLayout.place(placement.place()));
+            return this.layout.places.indexOf(this.layout.place(placement.place()));
         }
         if (placement.isInTab()) {
             return 1_000_000L + this.tabs.indexOf(placement.tab()) * 100_000L + placement.tabPosition();
@@ -194,19 +199,21 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         int left = this.leftPos;
         int top = this.topPos;
 
-        // Painted background at 3x resolution, scaled down to 480x270; linear filtering suits a painting.
-        this.minecraft.getTextureManager().getTexture(GearscopeStyle.BACKGROUND).setFilter(true, false);
-        guiGraphics.blit(GearscopeStyle.BACKGROUND, left, top, this.imageWidth, this.imageHeight, 0, 0,
-                GearscopeStyle.BACKGROUND_TEXTURE_WIDTH, GearscopeStyle.BACKGROUND_TEXTURE_HEIGHT,
-                GearscopeStyle.BACKGROUND_TEXTURE_WIDTH, GearscopeStyle.BACKGROUND_TEXTURE_HEIGHT);
+        // Painted background (3x resolution by default), scaled to the screen size; linear filtering suits a painting.
+        this.minecraft.getTextureManager().getTexture(this.layout.backgroundTexture).setFilter(true, false);
+        guiGraphics.blit(this.layout.backgroundTexture, left, top, this.imageWidth, this.imageHeight, 0, 0,
+                this.layout.backgroundTextureWidth, this.layout.backgroundTextureHeight,
+                this.layout.backgroundTextureWidth, this.layout.backgroundTextureHeight);
         this.attributePanel.render(guiGraphics, left, top, mouseX, mouseY);
         this.renderCraftingArrow(guiGraphics);
 
-        // Player figure; Accessories draws equipped (or cosmetic) accessories on it through its own render layer.
+        // Player figure standing on the pedestal; Accessories draws equipped (or cosmetic) accessories on it
+        // through its own render layer.
+        int boxX1 = left + this.layout.playerBoxX1();
+        int boxY1 = top + this.layout.playerBoxY1();
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,
-                left + GearscopeLayout.PLAYER_RENDER_X1, top + GearscopeLayout.PLAYER_RENDER_Y1,
-                left + GearscopeLayout.PLAYER_RENDER_X2, top + GearscopeLayout.PLAYER_RENDER_Y2,
-                GearscopeLayout.PLAYER_RENDER_SCALE, GearscopeLayout.PLAYER_RENDER_Y_OFFSET,
+                boxX1, boxY1, boxX1 + this.layout.playerBoxWidth, boxY1 + this.layout.playerBoxHeight,
+                this.layout.playerScale, this.layout.playerYOffset,
                 this.xMouse, this.yMouse, this.minecraft.player);
 
         // Frame under every visible slot (none for empty places); violet for cosmetic slots.
@@ -230,17 +237,17 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     /** Small gold arrow from the 2x2 grid down to the result slot. */
     private void renderCraftingArrow(GuiGraphics guiGraphics) {
-        int centerX = this.leftPos + GearscopeLayout.RESULT_X + 8;
-        int y = this.topPos + GearscopeLayout.CRAFT_ARROW_Y;
+        int centerX = this.leftPos + this.layout.resultX + 8;
+        int y = this.topPos + this.layout.craftArrowY;
         for (int row = 0; row < 4; row++) {
             guiGraphics.fill(centerX - 3 + row, y + row, centerX + 4 - row, y + row + 1, GearscopeStyle.ARROW);
         }
     }
 
     private void renderCosmeticButton(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        int x = this.leftPos + GearscopeLayout.COSMETIC_BUTTON_X;
-        int y = this.topPos + GearscopeLayout.COSMETIC_BUTTON_Y;
-        int size = GearscopeLayout.COSMETIC_BUTTON_SIZE;
+        int x = this.leftPos + this.layout.cosmeticButtonX;
+        int y = this.topPos + this.layout.cosmeticButtonY;
+        int size = this.layout.cosmeticButtonSize;
         boolean active = GearscopeClientState.cosmeticMode;
         guiGraphics.fill(x, y, x + size, y + size, active ? GearscopeStyle.COSMETIC_ACTIVE_FILL : GearscopeStyle.COSMETIC_FILL);
         guiGraphics.renderOutline(x, y, size, size, active ? GearscopeStyle.COSMETIC_ACTIVE_BORDER : GearscopeStyle.COSMETIC_BORDER);
@@ -253,41 +260,41 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             return;
         }
         int scroll = GearscopeClientState.tabScroll;
-        int visible = Math.min(GearscopeLayout.TABS_VISIBLE, this.tabs.size() - scroll);
+        int visible = Math.min(this.layout.tabsVisible, this.tabs.size() - scroll);
         for (int i = 0; i < visible; i++) {
             String tab = this.tabs.get(scroll + i);
-            int relY = GearscopeLayout.TAB_Y + i * GearscopeLayout.TAB_STEP;
-            int x = this.leftPos + GearscopeLayout.TAB_X;
+            int relY = this.layout.tabY + i * this.layout.tabStep;
+            int x = this.leftPos + this.layout.tabX;
             int y = this.topPos + relY;
             boolean selected = tab.equals(currentTab);
-            boolean hovered = this.isOver(mouseX, mouseY, GearscopeLayout.TAB_X, relY, GearscopeLayout.TAB_WIDTH, GearscopeLayout.TAB_HEIGHT);
+            boolean hovered = this.isOver(mouseX, mouseY, this.layout.tabX, relY, this.layout.tabWidth, this.layout.tabHeight);
             int fill = selected ? GearscopeStyle.TAB_SELECTED_FILL : hovered ? GearscopeStyle.TAB_HOVER_FILL : GearscopeStyle.TAB_FILL;
-            guiGraphics.fill(x, y, x + GearscopeLayout.TAB_WIDTH, y + GearscopeLayout.TAB_HEIGHT, fill);
-            guiGraphics.renderOutline(x, y, GearscopeLayout.TAB_WIDTH, GearscopeLayout.TAB_HEIGHT,
+            guiGraphics.fill(x, y, x + this.layout.tabWidth, y + this.layout.tabHeight, fill);
+            guiGraphics.renderOutline(x, y, this.layout.tabWidth, this.layout.tabHeight,
                     selected ? GearscopeStyle.TAB_SELECTED_BORDER : GearscopeStyle.TAB_BORDER);
             // Group icons are plain textures (assets/<ns>/textures/<icon>.png), drawn whole into 8x8
             // regardless of their actual size.
             guiGraphics.blit(this.tabIconTexture(tab), x + 1, y + 2, 8, 8, 0, 0, 1, 1, 1, 1);
         }
 
-        if (this.tabs.size() > GearscopeLayout.TABS_VISIBLE) {
-            this.renderArrow(guiGraphics, mouseX, mouseY, GearscopeLayout.TAB_X, GearscopeLayout.TAB_SCROLL_UP_Y, Arrow.UP, scroll > 0);
-            this.renderArrow(guiGraphics, mouseX, mouseY, GearscopeLayout.TAB_X, GearscopeLayout.TAB_SCROLL_DOWN_Y, Arrow.DOWN, scroll < this.maxTabScroll());
+        if (this.tabs.size() > this.layout.tabsVisible) {
+            this.renderArrow(guiGraphics, mouseX, mouseY, this.layout.tabX, this.layout.tabScrollUpY, Arrow.UP, scroll > 0);
+            this.renderArrow(guiGraphics, mouseX, mouseY, this.layout.tabX, this.layout.tabScrollDownY, Arrow.DOWN, scroll < this.maxTabScroll());
         }
 
         int pages = this.pageCount(currentTab);
         if (pages > 1) {
             int page = this.currentPage(currentTab);
-            this.renderArrow(guiGraphics, mouseX, mouseY, GearscopeLayout.PAGE_PREV_X, GearscopeLayout.PAGE_ARROW_Y, Arrow.LEFT, page > 0);
-            this.renderArrow(guiGraphics, mouseX, mouseY, GearscopeLayout.PAGE_NEXT_X, GearscopeLayout.PAGE_ARROW_Y, Arrow.RIGHT, page < pages - 1);
+            this.renderArrow(guiGraphics, mouseX, mouseY, this.layout.pagePrevX, this.layout.pageArrowY, Arrow.LEFT, page > 0);
+            this.renderArrow(guiGraphics, mouseX, mouseY, this.layout.pageNextX, this.layout.pageArrowY, Arrow.RIGHT, page < pages - 1);
         }
     }
 
     private void renderArrow(GuiGraphics guiGraphics, int mouseX, int mouseY, int relX, int relY, Arrow arrow, boolean enabled) {
         int x = this.leftPos + relX;
         int y = this.topPos + relY;
-        int width = GearscopeLayout.ARROW_WIDTH;
-        int height = GearscopeLayout.ARROW_HEIGHT;
+        int width = this.layout.arrowWidth;
+        int height = this.layout.arrowHeight;
         boolean hovered = enabled && this.isOver(mouseX, mouseY, relX, relY, width, height);
         int color = !enabled ? GearscopeStyle.ARROW_DISABLED : hovered ? GearscopeStyle.ARROW_HOVER : GearscopeStyle.ARROW;
         int centerX = x + width / 2;
@@ -325,8 +332,8 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     @Nullable
     private Component widgetTooltip(int mouseX, int mouseY) {
-        int size = GearscopeLayout.COSMETIC_BUTTON_SIZE;
-        if (this.isOver(mouseX, mouseY, GearscopeLayout.COSMETIC_BUTTON_X, GearscopeLayout.COSMETIC_BUTTON_Y, size, size)) {
+        int size = this.layout.cosmeticButtonSize;
+        if (this.isOver(mouseX, mouseY, this.layout.cosmeticButtonX, this.layout.cosmeticButtonY, size, size)) {
             return Component.translatable("gearscope.cosmetic_slots");
         }
         String tab = this.tabAt(mouseX, mouseY);
@@ -335,8 +342,8 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         }
         String currentTab = this.currentTab();
         if (currentTab != null && this.pageCount(currentTab) > 1
-                && (this.isOverArrow(mouseX, mouseY, GearscopeLayout.PAGE_PREV_X, GearscopeLayout.PAGE_ARROW_Y)
-                || this.isOverArrow(mouseX, mouseY, GearscopeLayout.PAGE_NEXT_X, GearscopeLayout.PAGE_ARROW_Y))) {
+                && (this.isOverArrow(mouseX, mouseY, this.layout.pagePrevX, this.layout.pageArrowY)
+                || this.isOverArrow(mouseX, mouseY, this.layout.pageNextX, this.layout.pageArrowY))) {
             return Component.translatable("gearscope.page", this.currentPage(currentTab) + 1, this.pageCount(currentTab));
         }
         return null;
@@ -404,8 +411,8 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     }
 
     private boolean handleWidgetClick(int mouseX, int mouseY) {
-        int size = GearscopeLayout.COSMETIC_BUTTON_SIZE;
-        if (this.isOver(mouseX, mouseY, GearscopeLayout.COSMETIC_BUTTON_X, GearscopeLayout.COSMETIC_BUTTON_Y, size, size)) {
+        int size = this.layout.cosmeticButtonSize;
+        if (this.isOver(mouseX, mouseY, this.layout.cosmeticButtonX, this.layout.cosmeticButtonY, size, size)) {
             GearscopeClientState.cosmeticMode = !GearscopeClientState.cosmeticMode;
             return true;
         }
@@ -414,12 +421,12 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             GearscopeClientState.selectedTab = tab;
             return true;
         }
-        if (this.tabs.size() > GearscopeLayout.TABS_VISIBLE) {
-            if (this.isOverArrow(mouseX, mouseY, GearscopeLayout.TAB_X, GearscopeLayout.TAB_SCROLL_UP_Y) && GearscopeClientState.tabScroll > 0) {
+        if (this.tabs.size() > this.layout.tabsVisible) {
+            if (this.isOverArrow(mouseX, mouseY, this.layout.tabX, this.layout.tabScrollUpY) && GearscopeClientState.tabScroll > 0) {
                 GearscopeClientState.tabScroll--;
                 return true;
             }
-            if (this.isOverArrow(mouseX, mouseY, GearscopeLayout.TAB_X, GearscopeLayout.TAB_SCROLL_DOWN_Y) && GearscopeClientState.tabScroll < this.maxTabScroll()) {
+            if (this.isOverArrow(mouseX, mouseY, this.layout.tabX, this.layout.tabScrollDownY) && GearscopeClientState.tabScroll < this.maxTabScroll()) {
                 GearscopeClientState.tabScroll++;
                 return true;
             }
@@ -427,11 +434,11 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         String currentTab = this.currentTab();
         if (currentTab != null && this.pageCount(currentTab) > 1) {
             int page = this.currentPage(currentTab);
-            if (this.isOverArrow(mouseX, mouseY, GearscopeLayout.PAGE_PREV_X, GearscopeLayout.PAGE_ARROW_Y) && page > 0) {
+            if (this.isOverArrow(mouseX, mouseY, this.layout.pagePrevX, this.layout.pageArrowY) && page > 0) {
                 GearscopeClientState.TAB_PAGES.put(currentTab, page - 1);
                 return true;
             }
-            if (this.isOverArrow(mouseX, mouseY, GearscopeLayout.PAGE_NEXT_X, GearscopeLayout.PAGE_ARROW_Y) && page < this.pageCount(currentTab) - 1) {
+            if (this.isOverArrow(mouseX, mouseY, this.layout.pageNextX, this.layout.pageArrowY) && page < this.pageCount(currentTab) - 1) {
                 GearscopeClientState.TAB_PAGES.put(currentTab, page + 1);
                 return true;
             }
@@ -442,10 +449,10 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     @Nullable
     private String tabAt(int mouseX, int mouseY) {
         int scroll = GearscopeClientState.tabScroll;
-        int visible = Math.min(GearscopeLayout.TABS_VISIBLE, this.tabs.size() - scroll);
+        int visible = Math.min(this.layout.tabsVisible, this.tabs.size() - scroll);
         for (int i = 0; i < visible; i++) {
-            int relY = GearscopeLayout.TAB_Y + i * GearscopeLayout.TAB_STEP;
-            if (this.isOver(mouseX, mouseY, GearscopeLayout.TAB_X, relY, GearscopeLayout.TAB_WIDTH, GearscopeLayout.TAB_HEIGHT)) {
+            int relY = this.layout.tabY + i * this.layout.tabStep;
+            if (this.isOver(mouseX, mouseY, this.layout.tabX, relY, this.layout.tabWidth, this.layout.tabHeight)) {
                 return this.tabs.get(scroll + i);
             }
         }
@@ -453,7 +460,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     }
 
     private boolean isOverArrow(int mouseX, int mouseY, int relX, int relY) {
-        return this.isOver(mouseX, mouseY, relX, relY, GearscopeLayout.ARROW_WIDTH, GearscopeLayout.ARROW_HEIGHT);
+        return this.isOver(mouseX, mouseY, relX, relY, this.layout.arrowWidth, this.layout.arrowHeight);
     }
 
     private boolean isOver(double mouseX, double mouseY, int relX, int relY, int width, int height) {

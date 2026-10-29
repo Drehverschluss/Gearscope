@@ -1,7 +1,6 @@
 package com.drehverschluss.gearscope.client;
 
 import com.drehverschluss.gearscope.Gearscope;
-import com.drehverschluss.gearscope.core.GearscopeLayout;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -69,12 +68,8 @@ public final class SlotPlacesLoader extends SimplePreparableReloadListener<Map<S
                 array.add(entry.getValue());
             }
             for (JsonElement element : array) {
-                String place = element.getAsString();
-                if (GearscopeLayout.place(place) == null) {
-                    Gearscope.LOGGER.warn("{}: unknown place '{}' for slot type '{}'", LOCATION, place, entry.getKey());
-                } else {
-                    places.add(place);
-                }
+                // Place names are checked against layout.json when the slots are placed.
+                places.add(element.getAsString());
             }
             result.put(entry.getKey(), List.copyOf(places));
         }
