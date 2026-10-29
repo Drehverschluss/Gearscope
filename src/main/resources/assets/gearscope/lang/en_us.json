@@ -9,6 +9,8 @@
   "gearscope.attributes.hide_unchanged": "Hide unchanged",
   "gearscope.attributes.current": "Current: %s",
   "gearscope.attributes.base": "Base: %s",
+  "gearscope.configuration.closeContainersWithKey": "Gearscope key closes containers",
+  "gearscope.configuration.closeContainersWithKey.tooltip": "The Gearscope key also closes other container screens (chests, furnaces, backpacks ...), like the vanilla inventory key does. Useful if Gearscope is bound to E and the vanilla inventory to another key.",
   "gearscope.configuration.accessories": "Accessories",
   "gearscope.configuration.ignoreWildcardItemsForUsedSlots": "Ignore wildcard items for unused slots",
   "gearscope.configuration.ignoreWildcardItemsForUsedSlots.tooltip": "Items that fit into every slot type (accessories:any) do not make a slot type count as used, so slot types without a real item stay hidden. Slots that hold an item are always shown.",

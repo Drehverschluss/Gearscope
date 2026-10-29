@@ -18,8 +18,10 @@ parchment scroll and updated live while you change your gear.
 > **Client & Server required.** Gearscope is a real container screen, so it has to be installed on the server and
 > on every client.
 >
-> **Key binding unbound by default.** Assign *Open Gearscope* under *Options → Controls → Gearscope*. The vanilla
-> inventory on **E** stays exactly as it is; Gearscope is an alternative, not a replacement.
+> **Key binding unbound by default.** Assign *Open Gearscope* under *Options → Controls → Gearscope*; the same key
+> closes Gearscope again. The vanilla inventory on **E** stays exactly as it is; Gearscope is an alternative, not a
+> replacement. To put Gearscope on **E**, move the vanilla inventory to another key (e.g. Shift+E) and turn on
+> `closeContainersWithKey` so E still closes chests and other containers.
 
 ## Screenshots
 
@@ -43,7 +45,7 @@ them, Gearscope turns cosmetic armor off and logs it once instead of crashing.
 ## Installation
 
 1. Install NeoForge `21.1` for Minecraft `1.21.1`.
-2. Put `gearscope-0.1.0.jar` into the `mods` folder of the **server and of every client**.
+2. Put `gearscope-0.1.1.jar` into the `mods` folder of the **server and of every client**.
 3. Bind *Open Gearscope* in the controls.
 4. Optional: install any of the mods below; Gearscope picks them up automatically.
 
@@ -104,6 +106,7 @@ Client config `config/gearscope-client.toml`:
 | Section | Option | Meaning |
 |---|---|---|
 | `screen` | `autoScale` | Temporarily lower the GUI scale if the screen does not fit (default `true`) |
+| `screen` | `closeContainersWithKey` | The Gearscope key also closes other container screens (chests, furnaces, backpacks ...), like the vanilla inventory key; not while a text field has focus and not in the creative inventory. Useful if Gearscope is bound to E and the vanilla inventory to another key (default `false`) |
 | `attributes` | `hideUnchanged` | Only show attributes whose value differs from the base value (also the checkbox on the scroll) |
 | `attributes` | `collapsedGroups` | Collapsed attribute groups (group ids, also set by clicking a group header) |
 | `attributes` | `hiddenAttributes` | Attributes that are never shown: `minecraft:generic.luck`, `some_mod:*`, `!some_mod:visible_one`. With Apothic Attributes, its "Hidden Attributes" list applies in addition |

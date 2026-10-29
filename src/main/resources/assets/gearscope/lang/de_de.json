@@ -11,6 +11,8 @@
   "gearscope.attributes.base": "Basis: %s",
   "accessories.display.toggle.show": "Am Charakter anzeigen",
   "accessories.display.toggle.hide": "Am Charakter ausblenden",
+  "gearscope.configuration.closeContainersWithKey": "Gearscope-Taste schließt Behälter",
+  "gearscope.configuration.closeContainersWithKey.tooltip": "Die Gearscope-Taste schließt auch andere Behälter-Fenster (Truhen, Öfen, Rucksäcke …), so wie die Inventar-Taste. Praktisch, wenn Gearscope auf E liegt und das Vanilla-Inventar auf einer anderen Taste.",
   "gearscope.configuration.accessories": "Accessories",
   "gearscope.configuration.ignoreWildcardItemsForUsedSlots": "Platzhalter-Items bei unbenutzten Slots ignorieren",
   "gearscope.configuration.ignoreWildcardItemsForUsedSlots.tooltip": "Items, die in jeden Slot-Typ passen (accessories:any), machen einen Slot-Typ nicht zu einem benutzten. Slot-Typen ohne echtes Item bleiben so ausgeblendet. Slots mit einem Item werden immer angezeigt.",

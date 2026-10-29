@@ -512,6 +512,17 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     }
 
     @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // The Gearscope key closes Gearscope like the vanilla inventory key closes the inventory (the inventory key
+        // keeps working through super); not while a text field takes the input.
+        if (GearscopeKeyMappings.isGearscopeKey(keyCode, scanCode) && !TextInputFocus.isTextInputFocused(this)) {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if (this.swallowUntilRelease) {
             return true;

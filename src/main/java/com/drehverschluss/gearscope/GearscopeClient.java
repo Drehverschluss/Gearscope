@@ -52,6 +52,8 @@ public class GearscopeClient {
         // Before the screen and other mods (Mouse Tweaks remembers drag starts on mouse down): a click on an
         // accessory slot's render toggle must never reach the slot.
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, GearscopeClient::onMousePressed);
+        // Low priority: other listeners such as JEI's search field (which cancels the event) come first.
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, GearscopeKeyMappings::onScreenKeyPressed);
     }
 
     private static void onMousePressed(ScreenEvent.MouseButtonPressed.Pre event) {

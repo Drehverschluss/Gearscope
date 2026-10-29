@@ -10,6 +10,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class GearscopeClientConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue AUTO_SCALE;
+    public static final ModConfigSpec.BooleanValue CLOSE_CONTAINERS_WITH_KEY;
     public static final ModConfigSpec.BooleanValue HIDE_UNCHANGED;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> COLLAPSED_GROUPS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> HIDDEN_ATTRIBUTES;
@@ -21,6 +22,10 @@ public final class GearscopeClientConfig {
                 .comment("Temporarily lower the GUI scale while Gearscope is open if the screen does not fit the window",
                         "at the current scale (the saved GUI scale option is never changed)")
                 .define("autoScale", true);
+        CLOSE_CONTAINERS_WITH_KEY = builder
+                .comment("If the Gearscope key also closes other container screens (chests, furnaces, backpacks ...), like the",
+                        "vanilla inventory key does. Useful if Gearscope is bound to E and the vanilla inventory to another key.")
+                .define("closeContainersWithKey", false);
         builder.pop();
         builder.comment("Attribute list on the Gearscope screen").push("attributes");
         HIDE_UNCHANGED = builder
