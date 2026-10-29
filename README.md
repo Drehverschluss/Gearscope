@@ -66,9 +66,10 @@ corresponding feature is simply not there.
 
 - **Your real character** stands on a pedestal in the middle and follows the mouse.
 - **Armor and offhand** sit in the wooden strip on the left.
-- **Accessories** are placed around the character where they belong (necklace and cape at the shoulders, rings at
-  the hands, shoes and anklets at the feet) plus a strip on the right for hat, face, hand, wrist, belt and charm.
-  The back slot sits at the bottom of the left strip.
+- **Accessories** are placed around the character where they belong: necklace and cape at the shoulders, rings at
+  the hands with hand slots in an outer column, shoes at the feet with anklets in an outer column (two-slot types
+  get one place on each side). A strip on the right holds hat, face, wrist, belt and charm, and the back slot sits
+  at the bottom of the left strip.
 - **Everything else** goes into group tabs next to the inventory, in Accessories' group order. Slots without a group
   land in an "Other" tab, so nothing gets lost.
 - **Full inventory, hotbar and 2×2 crafting**: shift-click, double-click and hotbar keys work as usual.
@@ -102,7 +103,13 @@ Client config `config/gearscope-client.toml`:
 | `screen` | `autoScale` | Temporarily lower the GUI scale if the screen does not fit (default `true`) |
 | `attributes` | `hideUnchanged` | Only show attributes whose value differs from the base value (also the checkbox on the scroll) |
 | `attributes` | `collapsedGroups` | Collapsed attribute groups (group ids, also set by clicking a group header) |
-| `attributes` | `hiddenAttributes` | Attributes that are never shown: `minecraft:generic.luck`, `some_mod:*`, `!some_mod:visible_one` |
+| `attributes` | `hiddenAttributes` | Attributes that are never shown: `minecraft:generic.luck`, `some_mod:*`, `!some_mod:visible_one`. With Apothic Attributes, its "Hidden Attributes" list applies in addition |
+
+Common config `config/gearscope-common.toml` (read on the server, where the slots are built):
+
+| Section | Option | Meaning |
+|---|---|---|
+| `accessories` | `ignoreWildcardItemsForUsedSlots` | Items that fit into every slot type (`accessories:any`, e.g. Curios items tagged `curios:curio`) do not make a slot type count as used, so slot types without a real item stay hidden (default `true`). `false` uses exactly Accessories' own check |
 
 ## Data-driven customization
 
@@ -112,7 +119,7 @@ rebuilt with the new values).
 | File | Content |
 |---|---|
 | `assets/gearscope/gearscope/layout.json` | Position of every area, slot and button. Missing entries keep their default. Full reference: [docs/layout.md](docs/layout.md) |
-| `assets/gearscope/gearscope/slot_places.json` | Which Accessories slot type goes to which named place, e.g. `"ring": ["body_left_mid", "body_right_mid"]`. Slots without a free place go to the tabs |
+| `assets/gearscope/gearscope/slot_places.json` | Which Accessories slot type goes to which named place, e.g. `"ring": ["body_left_mid", "body_right_mid"]`. Slots without a free place go to the tabs. Place names (including `body_left_outer_mid`, `body_right_outer_mid`, `body_left_outer_low`, `body_right_outer_low`) are listed in [docs/layout.md](docs/layout.md) |
 | `assets/<namespace>/gearscope/attribute_groups.json` | Which attribute belongs to which group, e.g. `{ "groups": [ { "id": "offense", "order": 10, "attributes": ["minecraft:generic.attack_damage", "some_mod:*"] } ] }`. Files from all namespaces and packs are merged, so a pack only adds its own entries |
 
 The background, slot frames and tab icon are normal textures under `assets/gearscope/textures/gui/`.
@@ -120,7 +127,9 @@ The background, slot frames and tab icon are normal textures under `assets/gears
 ## Mod compatibility
 
 - **Accessories**: all slot types are read at runtime, so it works with every Accessorify slot mode and with Curios
-  slots through the Accessories Compatibility Layer.
+  slots through the Accessories Compatibility Layer. Like Accessories' own screen, slot types that no item can go
+  into are hidden unless "Show Unused Slots" is enabled in Accessories; a slot type that holds an item is always
+  shown.
 - **Apothic Attributes**: detailed attribute tooltip and hidden attributes, see above.
 - **JEI**: click the crafting arrow to see the crafting recipes; the **+** button moves recipes that fit into 2×2
   straight into the grid. JEI's item list stays clear of the screen.

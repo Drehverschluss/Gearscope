@@ -414,11 +414,29 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        // Over the tab column the wheel scrolls the tabs (one tab per notch); the selected tab stays selected
+        // even when it scrolls out of view.
+        if (this.hasAccessories && !this.tabs.isEmpty() && this.isOverTabColumn(mouseX, mouseY)) {
+            if (scrollY != 0) {
+                GearscopeClientState.tabScroll = Mth.clamp(GearscopeClientState.tabScroll - (int) Math.signum(scrollY),
+                        0, this.maxTabScroll());
+            }
+            return true;
+        }
         // Over the scroll the wheel only scrolls the attribute list.
         if (this.attributePanel.mouseScrolled(this.leftPos, this.topPos, mouseX, mouseY, scrollY)) {
             return true;
         }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    /** The tab column including its scroll arrows and a 1 px border. */
+    private boolean isOverTabColumn(double mouseX, double mouseY) {
+        int x = this.layout.tabX - 1;
+        int y = this.layout.tabScrollUpY - 1;
+        int width = Math.max(this.layout.tabWidth, this.layout.arrowWidth) + 2;
+        int height = this.layout.tabScrollDownY + this.layout.arrowHeight + 1 - y;
+        return this.isOver(mouseX, mouseY, x, y, width, height);
     }
 
     private boolean handleWidgetClick(int mouseX, int mouseY) {

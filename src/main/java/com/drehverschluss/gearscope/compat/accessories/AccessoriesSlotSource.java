@@ -1,6 +1,7 @@
 package com.drehverschluss.gearscope.compat.accessories;
 
 import com.drehverschluss.gearscope.Gearscope;
+import com.drehverschluss.gearscope.GearscopeCommonConfig;
 import com.drehverschluss.gearscope.core.AccessorySlotMeta;
 import com.drehverschluss.gearscope.core.AccessorySlotSource;
 import com.drehverschluss.gearscope.core.AccessorySlotSpec;
@@ -32,8 +33,9 @@ import net.minecraft.world.level.Level;
 /**
  * Reads the player's Accessories slots at runtime. Which slot types are shown follows Accessories' own
  * screen: the entity's valid groups without unique groups, containers of size 0 skipped, and, unless the
- * player enabled "show unused slots", only slot types that an item the player has could go into
- * (AccessoriesAPI.getUsedSlotsFor).
+ * player enabled "show unused slots", only slot types that some item could go into (AccessoriesAPI.getUsedSlotsFor,
+ * the same check Accessories' own menus use; with ignoreWildcardItemsForUsedSlots, {@link UsedSlotTypes} without
+ * wildcard items) or that currently hold an item (functional or cosmetic).
  */
 final class AccessoriesSlotSource implements AccessorySlotSource {
     private static final EquipmentSlot[] ARMOR_SLOTS = {
@@ -77,7 +79,7 @@ final class AccessoriesSlotSource implements AccessorySlotSource {
                 if (container == null || container.slotType() == null || container.getSize() <= 0) {
                     continue;
                 }
-                if (usedSlotNames != null && !usedSlotNames.contains(name)) {
+                if (usedSlotNames != null && !usedSlotNames.contains(name) && isEmpty(container)) {
                     continue;
                 }
                 specs.add(new AccessorySlotSpec(name, container.getSize(), group.getKey().name()));
@@ -190,7 +192,18 @@ final class AccessoriesSlotSource implements AccessorySlotSource {
         return SlotGroupLoader.getGroup(level, groupName).map(SlotGroup::translation).orElse(groupName);
     }
 
+    /**
+     * Whether no functional or cosmetic slot of this container holds an item. Unused slot types stay visible
+     * while they hold something, so an item placed there (e.g. by a command) can always be taken out.
+     */
+    private static boolean isEmpty(AccessoriesContainer container) {
+        return container.getAccessories().isEmpty() && container.getCosmeticAccessories().isEmpty();
+    }
+
     private static Set<String> usedSlotNames(Player player, Collection<ItemStack> extraUsedStacks) {
+        if (GearscopeCommonConfig.IGNORE_WILDCARD_ITEMS_FOR_USED_SLOTS.get()) {
+            return UsedSlotTypes.withoutWildcards(player, extraUsedStacks);
+        }
         Set<String> names = new HashSet<>();
         for (SlotType slotType : AccessoriesAPI.getUsedSlotsFor(player, player.getInventory())) {
             names.add(slotType.name());

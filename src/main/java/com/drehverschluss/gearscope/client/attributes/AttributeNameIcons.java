@@ -12,7 +12,8 @@ import net.minecraft.network.chat.Style;
  * Icon resource packs put an icon glyph in front of translated attribute names, e.g.
  * "§f\uDB80\uDCFF §rAttack Damage" (Icons) or "§f\uD833\uDD03§r Attack Damage" (RPG Series Icons). The list
  * shows icons in its own column, so it splits such a glyph off the name: leading formatting codes, one icon
- * code point (private use, unassigned or symbol) and the whitespace after it.
+ * code point (private use, unassigned or symbol) and the whitespace after it. Leading "%" signs are dropped
+ * from the name as well (see {@link #nameFrom}); this is only used for the list, never for tooltips.
  */
 final class AttributeNameIcons {
     private static final char FORMATTING_PREFIX = '\u00A7';
@@ -37,14 +38,37 @@ final class AttributeNameIcons {
 
         int nameStart = iconEnd(text);
         if (nameStart < 0) {
-            return new Split(null, name);
+            return new Split(null, percentPrefixEnd(text, skipFormatting(text, 0)) < 0 ? name : nameFrom(text, styles, 0));
         }
         // The icon part ends before the whitespace that separates it from the name.
         int iconEnd = nameStart;
         while (iconEnd > 0 && Character.isWhitespace(text.charAt(iconEnd - 1))) {
             iconEnd--;
         }
-        return new Split(slice(text, styles, 0, iconEnd), slice(text, styles, nameStart, text.length()));
+        return new Split(slice(text, styles, 0, iconEnd), nameFrom(text, styles, nameStart));
+    }
+
+    /**
+     * The name starting at {@code start}. Some mods name attributes for item tooltips like "+10% Critical
+     * Damage", so the name itself starts with "% " (e.g. Cataclysm's "% Critical Damage"); such leading "%"
+     * and spaces are dropped here, formatting codes in front of them are kept.
+     */
+    private static FormattedText nameFrom(CharSequence text, List<Style> styles, int start) {
+        int codesEnd = skipFormatting(text, start);
+        int trimmed = percentPrefixEnd(text, codesEnd);
+        if (trimmed < 0) {
+            return slice(text, styles, start, text.length());
+        }
+        return FormattedText.composite(slice(text, styles, start, codesEnd), slice(text, styles, trimmed, text.length()));
+    }
+
+    /** End of the leading "%"/whitespace run at {@code start}, or -1 if there is none or nothing would be left. */
+    private static int percentPrefixEnd(CharSequence text, int start) {
+        int i = start;
+        while (i < text.length() && (text.charAt(i) == '%' || Character.isWhitespace(text.charAt(i)))) {
+            i++;
+        }
+        return i == start || i >= text.length() ? -1 : i;
     }
 
     /** Index where the name starts after a leading icon glyph, or -1 if there is no such glyph. */

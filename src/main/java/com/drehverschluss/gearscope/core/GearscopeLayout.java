@@ -98,6 +98,10 @@ public final class GearscopeLayout {
             this.places.put("body_right_mid", new int[] {183, 88});
             this.places.put("body_left_low", new int[] {103, 112});
             this.places.put("body_right_low", new int[] {183, 112});
+            this.places.put("body_left_outer_mid", new int[] {81, 88});
+            this.places.put("body_right_outer_mid", new int[] {205, 88});
+            this.places.put("body_left_outer_low", new int[] {81, 112});
+            this.places.put("body_right_outer_low", new int[] {205, 112});
             this.places.put("strip_left_6", new int[] {27, 114});
             this.places.put("strip_right_1", new int[] {256, 24});
             this.places.put("strip_right_2", new int[] {256, 42});

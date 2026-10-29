@@ -20,7 +20,19 @@
         "apothic_attributes:cold_damage",
         "artifacts:generic.attack_burning_duration",
         "critical_strike:*",
-        "more_rpg_classes:*"
+        "more_rpg_classes:*",
+        "mrpg_lib:armor_piercing",
+        "mrpg_lib:bleeding_chance",
+        "mrpg_lib:burning_chance",
+        "mrpg_lib:freeze_chance",
+        "mrpg_lib:poison_chance",
+        "mrpg_lib:stagger_chance",
+        "mrpg_lib:stun_chance",
+        "mrpg_lib:lifesteal_modifier",
+        "mrpg_lib:rage_modifier",
+        "cataclysm:additional_critical_damage",
+        "cataclysm:charge_time",
+        "mrpg_lib:*"
       ]
     },
     {
@@ -53,7 +65,11 @@
         "spell_engine:evasion_chance",
         "spell_engine:damage_taken",
         "spell_engine:healing_taken",
-        "spell_power:resistance.generic"
+        "spell_power:resistance.generic",
+        "mrpg_lib:damage_reflect_modifier",
+        "mrpg_lib:tenacity",
+        "cataclysm:nature_heal",
+        "bhc:heart_effectiveness"
       ]
     },
     {
@@ -62,7 +78,15 @@
       "attributes": [
         "spell_power:*",
         "spell_engine:*",
-        "apothic_attributes:cooldown_reduction"
+        "apothic_attributes:cooldown_reduction",
+        "mrpg_lib:air_fuse_modifier",
+        "mrpg_lib:arcane_fuse_modifier",
+        "mrpg_lib:earth_fuse_modifier",
+        "mrpg_lib:fire_fuse_modifier",
+        "mrpg_lib:frost_fuse_modifier",
+        "mrpg_lib:healing_fuse_modifier",
+        "mrpg_lib:water_fuse_modifier",
+        "mrpg_lib:spell_vampire"
       ]
     },
     {
@@ -108,7 +132,8 @@
         "artifacts:generic.drinking_speed",
         "artifacts:generic.eating_speed",
         "artifacts:player.villager_reputation",
-        "artifacts:player.entity_experience"
+        "artifacts:player.entity_experience",
+        "cataclysm:eat_speed"
       ]
     },
     {

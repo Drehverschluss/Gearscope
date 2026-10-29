@@ -17,6 +17,22 @@ layout; resource packs can override it like any other asset.
 - Slot places defined under `places` can be referenced by name in `slot_places.json`.
   A pack can move existing places or add new ones; unknown place names in
   `slot_places.json` are skipped with a single warning.
+- A place that no slot uses is not drawn at all.
+
+## Default places
+
+| Place | Position |
+|---|---|
+| `body_left_top`, `body_right_top` | Next to the shoulders (necklace, cape) |
+| `body_left_mid`, `body_right_mid` | Next to the hands (ring) |
+| `body_left_outer_mid`, `body_right_outer_mid` | Outer column at hand height (hand) |
+| `body_left_low`, `body_right_low` | Next to the feet (shoes) |
+| `body_left_outer_low`, `body_right_outer_low` | Outer column at foot height (anklet) |
+| `strip_left_6` | Bottom of the left strip, below the offhand (back) |
+| `strip_right_1` … `strip_right_6` | Right strip from top to bottom (hat, face, wrist, belt, charm; `strip_right_6` is free) |
+
+Slot types with two slots take their places in list order, e.g. `"shoes": ["body_left_low", "body_right_low"]`.
+Shift-click fills accessory slots in the order of `places` (body places first, then the strips, then the tabs).
 
 ## Example: move the inventory 10 px to the right
 
