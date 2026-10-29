@@ -4,13 +4,13 @@
     "cape": ["body_right_top"],
     "ring": ["body_left_mid", "body_right_mid"],
     "hand": ["body_left_outer_mid", "body_right_outer_mid"],
+    "belt": ["body_left_waist", "body_right_waist"],
+    "charm": ["body_left_outer_waist", "body_right_outer_waist"],
     "shoes": ["body_left_low", "body_right_low"],
     "anklet": ["body_left_outer_low", "body_right_outer_low"],
     "back": ["strip_left_6"],
     "hat": ["strip_right_1"],
     "face": ["strip_right_2"],
-    "wrist": ["strip_right_3"],
-    "belt": ["strip_right_4"],
-    "charm": ["strip_right_5"]
+    "wrist": ["strip_right_3"]
   }
 }

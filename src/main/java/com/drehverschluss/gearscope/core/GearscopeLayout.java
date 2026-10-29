@@ -92,15 +92,20 @@ public final class GearscopeLayout {
         public int attrIconSize = 9;
 
         public Builder() {
-            this.places.put("body_left_top", new int[] {103, 62});
-            this.places.put("body_right_top", new int[] {183, 62});
-            this.places.put("body_left_mid", new int[] {103, 88});
-            this.places.put("body_right_mid", new int[] {183, 88});
+            // Body places row by row (top, mid, waist, low), each from the outer left to the outer right.
+            this.places.put("body_left_top", new int[] {103, 52});
+            this.places.put("body_right_top", new int[] {183, 52});
+            this.places.put("body_left_outer_mid", new int[] {81, 72});
+            this.places.put("body_left_mid", new int[] {103, 72});
+            this.places.put("body_right_mid", new int[] {183, 72});
+            this.places.put("body_right_outer_mid", new int[] {205, 72});
+            this.places.put("body_left_outer_waist", new int[] {81, 92});
+            this.places.put("body_left_waist", new int[] {103, 92});
+            this.places.put("body_right_waist", new int[] {183, 92});
+            this.places.put("body_right_outer_waist", new int[] {205, 92});
+            this.places.put("body_left_outer_low", new int[] {81, 112});
             this.places.put("body_left_low", new int[] {103, 112});
             this.places.put("body_right_low", new int[] {183, 112});
-            this.places.put("body_left_outer_mid", new int[] {81, 88});
-            this.places.put("body_right_outer_mid", new int[] {205, 88});
-            this.places.put("body_left_outer_low", new int[] {81, 112});
             this.places.put("body_right_outer_low", new int[] {205, 112});
             this.places.put("strip_left_6", new int[] {27, 114});
             this.places.put("strip_right_1", new int[] {256, 24});

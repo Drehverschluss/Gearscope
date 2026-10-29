@@ -21,18 +21,21 @@ layout; resource packs can override it like any other asset.
 
 ## Default places
 
-| Place | Position |
-|---|---|
-| `body_left_top`, `body_right_top` | Next to the shoulders (necklace, cape) |
-| `body_left_mid`, `body_right_mid` | Next to the hands (ring) |
-| `body_left_outer_mid`, `body_right_outer_mid` | Outer column at hand height (hand) |
-| `body_left_low`, `body_right_low` | Next to the feet (shoes) |
-| `body_left_outer_low`, `body_right_outer_low` | Outer column at foot height (anklet) |
-| `strip_left_6` | Bottom of the left strip, below the offhand (back) |
-| `strip_right_1` … `strip_right_6` | Right strip from top to bottom (hat, face, wrist, belt, charm; `strip_right_6` is free) |
+The niche around the figure has four rows with an inner and an outer column on both sides (the top row only has the
+inner column).
+
+| Place | Position `[x, y]` | Default slot type |
+|---|---|---|
+| `body_left_top`, `body_right_top` | `[103, 52]`, `[183, 52]` – shoulders | necklace, cape |
+| `body_left_outer_mid`, `body_left_mid`, `body_right_mid`, `body_right_outer_mid` | `[81, 72]`, `[103, 72]`, `[183, 72]`, `[205, 72]` – hands | hand (outer), ring (inner) |
+| `body_left_outer_waist`, `body_left_waist`, `body_right_waist`, `body_right_outer_waist` | `[81, 92]`, `[103, 92]`, `[183, 92]`, `[205, 92]` – waist | charm (outer), belt (inner) |
+| `body_left_outer_low`, `body_left_low`, `body_right_low`, `body_right_outer_low` | `[81, 112]`, `[103, 112]`, `[183, 112]`, `[205, 112]` – feet | anklet (outer), shoes (inner) |
+| `strip_left_6` | `[27, 114]` – bottom of the left strip, below the offhand | back |
+| `strip_right_1` … `strip_right_6` | `[256, 24]` … `[256, 114]` – right strip, top to bottom | hat, face, wrist; `strip_right_4` to `strip_right_6` are free |
 
 Slot types with two slots take their places in list order, e.g. `"shoes": ["body_left_low", "body_right_low"]`.
-Shift-click fills accessory slots in the order of `places` (body places first, then the strips, then the tabs).
+Shift-click fills accessory slots in the order of `places`: the body places row by row (top, mid, waist, low),
+then the strips, then the tabs. Places added by a resource pack come after the built-in ones.
 
 ## Example: move the inventory 10 px to the right
 

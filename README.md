@@ -66,10 +66,10 @@ corresponding feature is simply not there.
 
 - **Your real character** stands on a pedestal in the middle and follows the mouse.
 - **Armor and offhand** sit in the wooden strip on the left.
-- **Accessories** are placed around the character where they belong: necklace and cape at the shoulders, rings at
-  the hands with hand slots in an outer column, shoes at the feet with anklets in an outer column (two-slot types
-  get one place on each side). A strip on the right holds hat, face, wrist, belt and charm, and the back slot sits
-  at the bottom of the left strip.
+- **Accessories** are placed around the character where they belong, in four rows with an inner and an outer
+  column on each side (the top row only inner): necklace and cape at the shoulders, rings and hand slots at the
+  hands, belts and charms at the waist, shoes and anklets at the feet (two-slot types get one place on each side).
+  A strip on the right holds hat, face and wrist, and the back slot sits at the bottom of the left strip.
 - **Everything else** goes into group tabs next to the inventory, in Accessories' group order. Slots without a group
   land in an "Other" tab, so nothing gets lost.
 - **Full inventory, hotbar and 2×2 crafting**: shift-click, double-click and hotbar keys work as usual.
@@ -119,7 +119,7 @@ rebuilt with the new values).
 | File | Content |
 |---|---|
 | `assets/gearscope/gearscope/layout.json` | Position of every area, slot and button. Missing entries keep their default. Full reference: [docs/layout.md](docs/layout.md) |
-| `assets/gearscope/gearscope/slot_places.json` | Which Accessories slot type goes to which named place, e.g. `"ring": ["body_left_mid", "body_right_mid"]`. Slots without a free place go to the tabs. Place names (including `body_left_outer_mid`, `body_right_outer_mid`, `body_left_outer_low`, `body_right_outer_low`) are listed in [docs/layout.md](docs/layout.md) |
+| `assets/gearscope/gearscope/slot_places.json` | Which Accessories slot type goes to which named place, e.g. `"ring": ["body_left_mid", "body_right_mid"]`. Slots without a free place go to the tabs. All place names and positions (four body rows: `*_top`, `*_mid`, `*_waist`, `*_low`, the lower three with `*_outer_*` columns) are listed in [docs/layout.md](docs/layout.md) |
 | `assets/<namespace>/gearscope/attribute_groups.json` | Which attribute belongs to which group, e.g. `{ "groups": [ { "id": "offense", "order": 10, "attributes": ["minecraft:generic.attack_damage", "some_mod:*"] } ] }`. Files from all namespaces and packs are merged, so a pack only adds its own entries |
 
 The background, slot frames and tab icon are normal textures under `assets/gearscope/textures/gui/`.
