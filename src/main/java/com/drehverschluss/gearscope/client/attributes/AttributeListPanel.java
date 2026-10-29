@@ -338,7 +338,7 @@ public final class AttributeListPanel {
 
     /**
      * Better/worse than the base value, using the attribute's sentiment like Apothic's getValueColor (so e.g.
-     * "damage taken" going up is red).
+     * "damage taken" going up is red). Adapted from Apothic Attributes (MIT), see THIRD_PARTY_NOTICES.md.
      */
     public static int valueColor(Attribute attribute, double value, double base) {
         if (value == base) {

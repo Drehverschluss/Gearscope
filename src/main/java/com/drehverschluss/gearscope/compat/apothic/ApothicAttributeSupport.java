@@ -36,7 +36,8 @@ import net.minecraft.world.item.TooltipFlag;
  * Attribute support backed by Apothic Attributes: its hidden-attributes config, dynamic attributes, and the
  * same tooltip as its own attributes screen. The tooltip follows AttributesGui#renderTooltip from Apothic
  * Attributes 2.11.0 (MIT, Shadows of Fire) step by step, using its public building blocks; it only returns
- * the components instead of drawing them, so Gearscope can position the tooltip itself.
+ * the components instead of drawing them, so Gearscope can position the tooltip itself. See
+ * THIRD_PARTY_NOTICES.md.
  */
 final class ApothicAttributeSupport implements AttributeSupport {
     @Override

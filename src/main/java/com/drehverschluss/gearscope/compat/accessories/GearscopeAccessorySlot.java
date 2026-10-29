@@ -20,6 +20,9 @@ import net.minecraft.world.item.ItemStack;
  * An Accessories slot (functional or cosmetic) at a free position. Cosmetic handling mirrors Accessories'
  * own internal slot: cosmetic slots accept anything the slot type's validators accept and can always be
  * emptied. Visibility is controlled by the Gearscope screen on the client only.
+ * <p>
+ * The cosmetic handling and the empty slot tooltip are adapted from Accessories' AccessoriesInternalSlot (MIT),
+ * see THIRD_PARTY_NOTICES.md.
  */
 public class GearscopeAccessorySlot extends AccessoriesBasedSlot implements ToggleableSlot {
     private final boolean cosmetic;

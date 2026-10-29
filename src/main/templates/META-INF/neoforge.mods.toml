@@ -11,7 +11,10 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://github.com/Drehverschluss/Gearscope"
+logoFile="gearscope.png"
+logoBlur=false
 authors="${mod_authors}"
+credits="Attribute tooltip and value colors adapted from Apothic Attributes (Shadows_of_Fire, MIT); accessory slots built on the Accessories API (Wisp Forest, MIT)"
 description="${mod_description}"
 
 [[dependencies.${mod_id}]]

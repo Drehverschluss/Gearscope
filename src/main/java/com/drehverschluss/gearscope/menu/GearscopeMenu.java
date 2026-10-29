@@ -31,8 +31,8 @@ import net.minecraft.world.item.ItemStack;
  * The Gearscope character screen menu. Slot order (indices documented below) is fixed; new slots are only
  * ever appended, never reordered:
  * <ul>
- * <li>0-45: vanilla slots (Phase 1), see the constants below.</li>
- * <li>46+: Accessories slots (Phase 2), one functional and one cosmetic slot per slot index, in the order
+ * <li>0-45: vanilla slots, see the constants below.</li>
+ * <li>46+: Accessories slots, one functional and one cosmetic slot per slot index, in the order
  * of {@link #accessorySpecs()} which the server sends to the client.</li>
  * <li>Then, if the server enabled it, 4 cosmetic armor slots (head, chest, legs, feet) at the positions of
  * the vanilla armor slots; the screen shows either those or the vanilla ones.</li>

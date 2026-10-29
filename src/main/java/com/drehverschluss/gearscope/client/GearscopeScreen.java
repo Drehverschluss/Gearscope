@@ -30,9 +30,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import yalter.mousetweaks.api.MouseTweaksDisableWheelTweak;
 
 /**
- * Gearscope screen: placeholder panels instead of a background texture (added in Phase 4), simple frames
- * around every visible slot, the real player figure, and the Accessories slots (body places, sidebars,
- * group tabs, cosmetic toggle). Visibility of accessory slots is decided here, on the client only.
+ * Gearscope screen: the background texture, a frame around every visible slot, the real player figure on
+ * the pedestal, the Accessories slots (body places, sidebars, group tabs, cosmetic toggle) and the attribute
+ * list. All positions come from layout.json. Visibility of accessory slots is decided here, on the client only.
  * <p>
  * {@link MouseTweaksDisableWheelTweak}: Mouse Tweaks' wheel tweak does not get along with Accessories slots,
  * so it is switched off here (dragging tweaks stay on). The annotation type is compile-only; without Mouse
