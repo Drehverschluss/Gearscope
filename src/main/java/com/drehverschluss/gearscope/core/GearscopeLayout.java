@@ -90,6 +90,17 @@ public final class GearscopeLayout {
         public int attrRowHeight = 10;
         public int attrGroupGap = 3;
         public int attrIconSize = 9;
+        // Attributes/Effects tabs replacing the scroll title (effect display SCROLL_TAB), left aligned at x1.
+        public int attrTabWidth = 60;
+        public int attrTabHeight = 12;
+        public int attrTabGap = 2;
+        // Effect tiles above the frame (effect display TOP) and effect rows in the Effects tab.
+        public int effectTileWidth = 25;
+        public int effectTileHeight = 28;
+        public int effectTileGap = 2;
+        public int effectFrameGap = 5;
+        public int effectTileIconSize = 18;
+        public int effectRowHeight = 11;
 
         public Builder() {
             // Body places row by row (top, mid, waist, low), each from the outer left to the outer right.
@@ -198,6 +209,15 @@ public final class GearscopeLayout {
     public final int attrRowHeight;
     public final int attrGroupGap;
     public final int attrIconSize;
+    public final int attrTabWidth;
+    public final int attrTabHeight;
+    public final int attrTabGap;
+    public final int effectTileWidth;
+    public final int effectTileHeight;
+    public final int effectTileGap;
+    public final int effectFrameGap;
+    public final int effectTileIconSize;
+    public final int effectRowHeight;
 
     private GearscopeLayout(Builder b) {
         this.screenWidth = b.screenWidth;
@@ -271,6 +291,15 @@ public final class GearscopeLayout {
         this.attrRowHeight = b.attrRowHeight;
         this.attrGroupGap = b.attrGroupGap;
         this.attrIconSize = b.attrIconSize;
+        this.attrTabWidth = b.attrTabWidth;
+        this.attrTabHeight = b.attrTabHeight;
+        this.attrTabGap = b.attrTabGap;
+        this.effectTileWidth = b.effectTileWidth;
+        this.effectTileHeight = b.effectTileHeight;
+        this.effectTileGap = b.effectTileGap;
+        this.effectFrameGap = b.effectFrameGap;
+        this.effectTileIconSize = b.effectTileIconSize;
+        this.effectRowHeight = b.effectRowHeight;
     }
 
     @Nullable

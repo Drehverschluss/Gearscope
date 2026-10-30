@@ -153,6 +153,17 @@ public final class LayoutLoader extends SimplePreparableReloadListener<Gearscope
             readInt(attributes, "attributes", "row_height", v -> b.attrRowHeight = v, 1);
             readInt(attributes, "attributes", "group_gap", v -> b.attrGroupGap = v, 0);
             readInt(attributes, "attributes", "icon_size", v -> b.attrIconSize = v, 1);
+            readInt(attributes, "attributes", "tab_width", v -> b.attrTabWidth = v, 1);
+            readInt(attributes, "attributes", "tab_height", v -> b.attrTabHeight = v, 1);
+            readInt(attributes, "attributes", "tab_gap", v -> b.attrTabGap = v, 0);
+
+            JsonObject effects = this.section("effects");
+            readInt(effects, "effects", "tile_width", v -> b.effectTileWidth = v, 1);
+            readInt(effects, "effects", "tile_height", v -> b.effectTileHeight = v, 1);
+            readInt(effects, "effects", "tile_gap", v -> b.effectTileGap = v, 0);
+            readInt(effects, "effects", "frame_gap", v -> b.effectFrameGap = v, 0);
+            readInt(effects, "effects", "tile_icon_size", v -> b.effectTileIconSize = v, 1);
+            readInt(effects, "effects", "row_height", v -> b.effectRowHeight = v, 1);
         }
 
         @Nullable

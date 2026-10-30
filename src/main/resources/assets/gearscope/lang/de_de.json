@@ -24,5 +24,15 @@
   "gearscope.group.magic": "Magie",
   "gearscope.group.movement": "Bewegung",
   "gearscope.group.utility": "Nützliches",
-  "gearscope.group.other": "Sonstiges"
+  "gearscope.group.other": "Sonstiges",
+  "gearscope.group.effects": "Effekte",
+  "gearscope.effects.title": "Effekte",
+  "gearscope.effects.none": "Keine aktiven Effekte",
+  "gearscope.configuration.effects": "Effekte",
+  "gearscope.configuration.display": "Effektanzeige",
+  "gearscope.configuration.display.tooltip": "Wo aktive Effekte angezeigt werden: Kacheln über dem Rahmen (TOP, bei zu wenig Platz die Reiter), eine Gruppe in der Attributrolle, Reiter in der Attributrolle oder gar nicht.",
+  "gearscope.configuration.effectDisplay.top": "Über dem Rahmen",
+  "gearscope.configuration.effectDisplay.scroll_group": "Gruppe in der Rolle",
+  "gearscope.configuration.effectDisplay.scroll_tab": "Reiter in der Rolle",
+  "gearscope.configuration.effectDisplay.off": "Aus"
 }

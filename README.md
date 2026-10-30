@@ -45,7 +45,7 @@ them, Gearscope turns cosmetic armor off and logs it once instead of crashing.
 ## Installation
 
 1. Install NeoForge `21.1` for Minecraft `1.21.1`.
-2. Put `gearscope-0.1.1.jar` into the `mods` folder of the **server and of every client**.
+2. Put `gearscope-0.2.0.jar` into the `mods` folder of the **server and of every client**.
 3. Bind *Open Gearscope* in the controls.
 4. Optional: install any of the mods below; Gearscope picks them up automatically.
 
@@ -93,6 +93,23 @@ corresponding feature is simply not there.
   Attributes** installed it is Apothic's detailed tooltip (base/min/max, modifier sources, formula), and attributes
   hidden in Apothic's config are hidden in Gearscope too.
 
+### Active effects
+
+Active effects (potions, buffs) are shown with icon, name with level, remaining time (∞ for infinite effects) and
+a tooltip, green for beneficial and red for harmful effects; beacon effects are marked like in the vanilla HUD. The
+same effects as in the vanilla inventory are listed, in the same order. If a resource pack provides a
+`<effect translation key>.desc` entry, the tooltip shows it as description. Display modes (client config
+`[effects] display`):
+
+- `SCROLL_TAB` (default): "Attributes" and "Effects" tabs at the top of the scroll; the Effects tab shows the number
+  of active effects. The selected tab is remembered while the game runs.
+- `SCROLL_GROUP`: an "Effects" group above the attribute groups, collapsible like the others ("hide unchanged" does
+  not apply to it).
+- `TOP`: a row of tiles centered above the frame, wrapping into more rows (growing upwards). If there is not enough
+  room above the frame (small window, automatic GUI scaling), `SCROLL_TAB` is used instead. JEI keeps its overlays
+  off the tiles.
+- `OFF`: no effect display.
+
 ### Small windows
 
 Gearscope needs a 480×270 GUI area. If that does not fit at the current GUI scale (e.g. GUI scale 4 in a 1080p
@@ -107,6 +124,7 @@ Client config `config/gearscope-client.toml`:
 |---|---|---|
 | `screen` | `autoScale` | Temporarily lower the GUI scale if the screen does not fit (default `true`) |
 | `screen` | `closeContainersWithKey` | The Gearscope key also closes other container screens (chests, furnaces, backpacks ...), like the vanilla inventory key; not while a text field has focus and not in the creative inventory. Useful if Gearscope is bound to E and the vanilla inventory to another key (default `false`) |
+| `effects` | `display` | Where active effects are shown: `SCROLL_TAB` (default), `SCROLL_GROUP`, `TOP` (falls back to `SCROLL_TAB` without room above the frame) or `OFF`; applies right away |
 | `attributes` | `hideUnchanged` | Only show attributes whose value differs from the base value (also the checkbox on the scroll) |
 | `attributes` | `collapsedGroups` | Collapsed attribute groups (group ids, also set by clicking a group header) |
 | `attributes` | `hiddenAttributes` | Attributes that are never shown: `minecraft:generic.luck`, `some_mod:*`, `!some_mod:visible_one`. With Apothic Attributes, its "Hidden Attributes" list applies in addition |

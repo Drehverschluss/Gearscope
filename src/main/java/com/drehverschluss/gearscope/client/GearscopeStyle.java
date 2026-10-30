@@ -42,6 +42,23 @@ public final class GearscopeStyle {
     public static final int ATTR_SCROLLBAR_THUMB = 0xFF6E4A2A;
     public static final int ATTR_CHECKBOX = 0xFF6E1C18;
 
+    // Effects: tiles above the frame (TOP) use light colors on the dark slot background; the lists on the scroll use
+    // the attribute colors. Ambient (beacon) effects get a blue frame, like the vanilla HUD.
+    public static final int EFFECT_TILE_BENEFICIAL = 0xFF8CE08C;
+    public static final int EFFECT_TILE_HARMFUL = 0xFFFF7A6E;
+    public static final int EFFECT_TILE_NEUTRAL = 0xFFE6DCC8;
+    public static final int EFFECT_AMBIENT = 0xFF5FB4DC;
+    public static final int EFFECT_AMBIENT_BACKGROUND = 0x605FB4DC;
+
+    // Attributes/Effects tabs on the scroll and the effect count badge.
+    public static final int TAB_ACTIVE_FILL = 0x30FFFFFF;
+    public static final int TAB_INACTIVE_FILL = 0x14000000;
+    public static final int TAB_ACTIVE_TEXT = 0xFF6E1C18;
+    public static final int TAB_INACTIVE_TEXT = 0xFF6E5A44;
+    public static final int TAB_INACTIVE_BORDER = 0xFF9A8466;
+    public static final int BADGE_FILL = 0xFF7A1E18;
+    public static final int BADGE_TEXT = 0xFFFFFFFF;
+
     private GearscopeStyle() {
     }
 }

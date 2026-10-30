@@ -78,3 +78,8 @@ then the strips, then the tabs. Places added by a resource pack come after the b
 | `attributes` | `x1`, `y1`, `x2`, `y2` | int | Attribute panel bounds. |
 | | `list_y` | int | Y where the scrollable list starts. |
 | | `checkbox_size`, `scrollbar_width`, `header_height`, `row_height`, `group_gap`, `icon_size` | int | Attribute list metrics. |
+| | `tab_width`, `tab_height`, `tab_gap` | int | "Attributes" / "Effects" tabs at `x1`, `y1` (effect display `SCROLL_TAB`). |
+| `effects` | `tile_width`, `tile_height`, `tile_gap` | int | Effect tiles above the frame (effect display `TOP`). |
+| | `frame_gap` | int | Space between the frame and the lowest tile row. |
+| | `tile_icon_size` | int | Icon size inside a tile. |
+| | `row_height` | int | Height of an effect row in the "Effects" tab (rows in the "Effects" group use `attributes.row_height`). |

@@ -12,6 +12,7 @@ import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -33,6 +34,12 @@ public class GearscopeJeiPlugin implements IModPlugin {
         // Clicking the small arrow between grid and result shows the crafting recipes. Read from the
         // screen's layout each time, so a reloaded layout.json moves the area too.
         registration.addGuiContainerHandler(GearscopeScreen.class, new IGuiContainerHandler<GearscopeScreen>() {
+            // Effect tiles above the frame (effect display TOP) lie outside the screen area JEI already keeps clear.
+            @Override
+            public List<Rect2i> getGuiExtraAreas(GearscopeScreen screen) {
+                return screen.effectExclusionAreas();
+            }
+
             @Override
             public Collection<IGuiClickableArea> getGuiClickableAreas(GearscopeScreen screen, double guiMouseX, double guiMouseY) {
                 GearscopeLayout layout = screen.layout();

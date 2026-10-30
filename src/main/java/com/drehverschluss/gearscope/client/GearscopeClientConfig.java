@@ -11,6 +11,7 @@ public final class GearscopeClientConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue AUTO_SCALE;
     public static final ModConfigSpec.BooleanValue CLOSE_CONTAINERS_WITH_KEY;
+    public static final ModConfigSpec.EnumValue<EffectDisplayMode> EFFECT_DISPLAY;
     public static final ModConfigSpec.BooleanValue HIDE_UNCHANGED;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> COLLAPSED_GROUPS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> HIDDEN_ATTRIBUTES;
@@ -26,6 +27,15 @@ public final class GearscopeClientConfig {
                 .comment("If the Gearscope key also closes other container screens (chests, furnaces, backpacks ...), like the",
                         "vanilla inventory key does. Useful if Gearscope is bound to E and the vanilla inventory to another key.")
                 .define("closeContainersWithKey", false);
+        builder.pop();
+        builder.comment("Active effects (potions, buffs) on the Gearscope screen").push("effects");
+        EFFECT_DISPLAY = builder
+                .comment("TOP          - row of effect tiles above the Gearscope frame. If there is not enough room",
+                        "               above the frame (small window / auto scale), SCROLL_TAB is used instead.",
+                        "SCROLL_GROUP - an \"Effects\" group at the top of the attribute scroll.",
+                        "SCROLL_TAB   - two tabs at the top of the attribute scroll: \"Attributes\" and \"Effects\".",
+                        "OFF          - no effect display.")
+                .defineEnum("display", EffectDisplayMode.SCROLL_TAB);
         builder.pop();
         builder.comment("Attribute list on the Gearscope screen").push("attributes");
         HIDE_UNCHANGED = builder

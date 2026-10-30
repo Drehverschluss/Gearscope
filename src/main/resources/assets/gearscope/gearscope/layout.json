@@ -45,6 +45,10 @@
   "player": { "center_x": 151, "feet_y": 126, "scale": 40, "box_width": 80, "box_height": 100, "y_offset": 0.0625 },
   "attributes": {
     "x1": 315, "y1": 27, "x2": 449, "y2": 233, "list_y": 40,
-    "checkbox_size": 8, "scrollbar_width": 3, "header_height": 11, "row_height": 10, "group_gap": 3, "icon_size": 9
+    "checkbox_size": 8, "scrollbar_width": 3, "header_height": 11, "row_height": 10, "group_gap": 3, "icon_size": 9,
+    "tab_width": 60, "tab_height": 12, "tab_gap": 2
+  },
+  "effects": {
+    "tile_width": 25, "tile_height": 28, "tile_gap": 2, "frame_gap": 5, "tile_icon_size": 18, "row_height": 11
   }
 }

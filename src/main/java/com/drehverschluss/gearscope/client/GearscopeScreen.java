@@ -20,11 +20,13 @@ import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -63,6 +65,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     private final Map<String, ResourceLocation> tabIcons = new HashMap<>();
     private final boolean hasAccessories;
     private final AttributeListPanel attributePanel = new AttributeListPanel(this.layout);
+    private final EffectTiles effectTiles = new EffectTiles(this.layout);
 
     private float xMouse;
     private float yMouse;
@@ -205,9 +208,14 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // Decided every frame, so a config change or more effects than fit above the frame apply right away.
+        this.attributePanel.setEffectMode(this.effectMode());
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         Slot toggleSlot = this.menu.getCarried().isEmpty() ? this.renderToggleAt(mouseX, mouseY) : null;
-        if (toggleSlot != null) {
+        MobEffectInstance hoveredEffect = this.menu.getCarried().isEmpty() ? this.effectTileAt(mouseX, mouseY) : null;
+        if (hoveredEffect != null) {
+            guiGraphics.renderTooltip(this.font, ActiveEffects.tooltip(hoveredEffect, this.font), mouseX, mouseY);
+        } else if (toggleSlot != null) {
             boolean shown = ((RenderToggleSlot) toggleSlot).gearscope$rendersOnCharacter();
             guiGraphics.renderTooltip(this.font, Component.translatable("accessories.display.toggle." + (shown ? "hide" : "show")), mouseX, mouseY);
         } else {
@@ -265,6 +273,52 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             this.renderCosmeticButton(guiGraphics, mouseX, mouseY);
             this.renderTabs(guiGraphics, mouseX, mouseY);
         }
+
+        // Effect tiles above the frame (effect display TOP), drawn with the background so items stay on top.
+        if (this.effectMode() == EffectDisplayMode.TOP) {
+            List<MobEffectInstance> effects = ActiveEffects.visible(this.minecraft.player);
+            this.effectTiles.render(guiGraphics, this.font, effects,
+                    this.effectTiles.tileRects(effects.size(), left, top, this.imageWidth));
+        }
+    }
+
+    // --- Effects ---
+
+    /**
+     * The configured effect display; TOP becomes SCROLL_TAB when the tiles do not fit above the frame (checked after
+     * the automatic GUI scaling, i.e. with the current screen position).
+     */
+    private EffectDisplayMode effectMode() {
+        EffectDisplayMode mode = GearscopeClientConfig.EFFECT_DISPLAY.get();
+        if (mode == EffectDisplayMode.TOP && this.minecraft.player != null
+                && !this.effectTiles.fits(ActiveEffects.visible(this.minecraft.player).size(), this.imageWidth, this.topPos)) {
+            return EffectDisplayMode.SCROLL_TAB;
+        }
+        return mode;
+    }
+
+    @Nullable
+    private MobEffectInstance effectTileAt(double mouseX, double mouseY) {
+        if (this.minecraft.player == null || this.effectMode() != EffectDisplayMode.TOP) {
+            return null;
+        }
+        List<MobEffectInstance> effects = ActiveEffects.visible(this.minecraft.player);
+        return EffectTiles.effectAt(effects, this.effectTiles.tileRects(effects.size(), this.leftPos, this.topPos, this.imageWidth),
+                mouseX, mouseY);
+    }
+
+    /** Screen areas of the effect tile rows (effect display TOP), so JEI keeps its overlays off them. */
+    public List<Rect2i> effectExclusionAreas() {
+        if (this.minecraft == null || this.minecraft.player == null || this.effectMode() != EffectDisplayMode.TOP) {
+            return List.of();
+        }
+        return this.effectTiles.rowAreas(ActiveEffects.visible(this.minecraft.player).size(), this.leftPos, this.topPos, this.imageWidth);
+    }
+
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton) {
+        // A click on an effect tile must not drop the carried item like a click outside the screen.
+        return super.hasClickedOutside(mouseX, mouseY, guiLeft, guiTop, mouseButton) && this.effectTileAt(mouseX, mouseY) == null;
     }
 
     // --- Render toggles (Accessories' per-slot "show on character" switch) ---

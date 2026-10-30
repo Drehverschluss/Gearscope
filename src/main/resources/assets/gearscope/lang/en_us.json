@@ -22,5 +22,15 @@
   "gearscope.group.magic": "Magic",
   "gearscope.group.movement": "Movement",
   "gearscope.group.utility": "Utility",
-  "gearscope.group.other": "Other"
+  "gearscope.group.other": "Other",
+  "gearscope.group.effects": "Effects",
+  "gearscope.effects.title": "Effects",
+  "gearscope.effects.none": "No active effects",
+  "gearscope.configuration.effects": "Effects",
+  "gearscope.configuration.display": "Effect display",
+  "gearscope.configuration.display.tooltip": "Where active effects are shown: tiles above the frame (TOP, falls back to the tabs if there is not enough room), a group in the attribute scroll, tabs in the attribute scroll, or not at all.",
+  "gearscope.configuration.effectDisplay.top": "Above the frame",
+  "gearscope.configuration.effectDisplay.scroll_group": "Group in the scroll",
+  "gearscope.configuration.effectDisplay.scroll_tab": "Tabs in the scroll",
+  "gearscope.configuration.effectDisplay.off": "Off"
 }
