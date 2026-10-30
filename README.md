@@ -58,6 +58,9 @@ them, Gearscope turns cosmetic armor off and logs it once instead of crashing.
 | Sophisticated Backpacks | `3.26.17` | optional |
 | Mouse Tweaks | `2.26.1` | optional |
 | Inventory Sorter | `24.0.24` | optional |
+| Quark | `4.1-488` | optional |
+| Accessorify | `2.4.0-beta.5` | optional |
+| Better Party | `1.1.7` | optional |
 
 All integrations are `compileOnly` at build time and only loaded when the mod is installed. Without them, the
 corresponding feature is simply not there.
@@ -166,8 +169,14 @@ The background, slot frames and tab icon are normal textures under `assets/gears
   accessory slots).
 - **Inventory Sorter**: middle-click sorts the inventory; armor, offhand, crafting and accessory slots are left
   alone.
-- **Quark**: armor swapping and putting items into shulker boxes with a right click work. Quark's sorting buttons are
-  not added, and opening shulker boxes with a right click only works in the vanilla inventory (Quark's own choice).
+- **Quark**: Expanded Item Interactions work in Gearscope: swapping armor, putting items into shulker boxes, and
+  opening a shulker box in your inventory or hotbar with a right click (Quark's own container; its config switches
+  and its "invert clicks" option apply). Closing it returns to Gearscope. Quark's sorting buttons are not added.
+- **Accessorify**: a right click on a shulker box in Accessorify's shulker slot or on an equipped ender chest opens
+  it, like Accessorify's own selection widget (respects its config switches). A left click still takes the item out;
+  closing the container returns to Gearscope.
+- **Better Party**: its party button appears next to the cosmetic button (following Better Party's "inventory
+  button" setting and icon choice) and opens the party screen; closing it returns to Gearscope.
 
 ## Project layout
 
@@ -179,7 +188,7 @@ The background, slot frames and tab icon are normal textures under `assets/gears
 | `network` | Payloads and their registration |
 | `client` | Screen, key binding, config, GUI scale override, layout and slot place loaders, style |
 | `client.attributes` | Attribute list, groups loader, icon handling, fallback tooltip |
-| `compat.*` | Optional integrations (Accessories, Apothic Attributes, JEI, Polymorph, Sophisticated Backpacks, Inventory Sorter); only loaded when the mod is installed |
+| `compat.*` | Optional integrations (Accessories, Accessorify, Apothic Attributes, Better Party, JEI, Polymorph, Quark, Sophisticated Backpacks, Inventory Sorter); only loaded when the mod is installed |
 
 ## Development
 
@@ -222,5 +231,7 @@ license texts are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) (also incl
 - The accessory slots are built on the [Accessories](https://github.com/wisp-forest/accessories) API by Wisp Forest
   (MIT); the cosmetic slot handling follows Accessories' own slots.
 - Inspired by **Character Not Container** by CappleApple (idea only, no code used).
+- With Better Party installed, its party button is drawn with Better Party's own textures, loaded from Better
+  Party at runtime; Gearscope does not ship any of them.
 - Gearscope is an unofficial companion and not affiliated with any of these mods.
 - Bug reports and suggestions: [issue tracker](https://github.com/Drehverschluss/Gearscope/issues).

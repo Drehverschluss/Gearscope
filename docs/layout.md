@@ -70,6 +70,8 @@ then the strips, then the tabs. Places added by a resource pack come after the b
 | | `page_prev_x`, `page_next_x` | int | Page arrows. |
 | `cosmetic_button` | `x`, `y`, `size` | int | Cosmetic toggle button. |
 | `recipe_button` | `x`, `y`, `size` | int | Polymorph's recipe selection button (only with Polymorph installed). |
+| `mod_buttons` | `x`, `y` | int | First button of other mods (e.g. Better Party's party button); more follow to the right. |
+| | `size`, `step` | int | Button size and distance from one button to the next. |
 | `player` | `center_x` | int | Horizontal center of the player figure. |
 | | `feet_y` | int | Y where the feet of the figure stand. |
 | | `scale` | int | Render scale of the figure. |

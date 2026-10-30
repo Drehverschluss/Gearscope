@@ -7,6 +7,7 @@ import com.drehverschluss.gearscope.core.AccessorySlotSource;
 import com.drehverschluss.gearscope.core.AccessorySlotSpec;
 import com.drehverschluss.gearscope.core.GearscopeLayout;
 import com.drehverschluss.gearscope.core.GearscopeServices;
+import com.drehverschluss.gearscope.core.SlotClickHandler;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -272,6 +274,20 @@ public class GearscopeMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return player.isAlive();
+    }
+
+    @Override
+    public void clicked(int slotId, int button, ClickType clickType, Player player) {
+        // Plain clicks that another mod's feature takes over (e.g. opening a shulker box in place), on both sides.
+        if (clickType == ClickType.PICKUP && slotId >= 0 && slotId < this.slots.size()) {
+            Slot slot = this.slots.get(slotId);
+            for (SlotClickHandler handler : GearscopeServices.slotClickHandlers()) {
+                if (handler.handleClick(this, slot, button, player)) {
+                    return;
+                }
+            }
+        }
+        super.clicked(slotId, button, clickType, player);
     }
 
     @Override

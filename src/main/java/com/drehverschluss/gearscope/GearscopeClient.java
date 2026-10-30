@@ -2,14 +2,20 @@ package com.drehverschluss.gearscope;
 
 import com.drehverschluss.gearscope.client.GearscopeClientConfig;
 import com.drehverschluss.gearscope.client.GearscopeKeyMappings;
+import com.drehverschluss.gearscope.client.GearscopeReturn;
 import com.drehverschluss.gearscope.client.GearscopeScreen;
 import com.drehverschluss.gearscope.client.GearscopeSlotPlacer;
 import com.drehverschluss.gearscope.client.GuiScaleOverride;
 import com.drehverschluss.gearscope.client.LayoutLoader;
 import com.drehverschluss.gearscope.client.SlotPlacesLoader;
 import com.drehverschluss.gearscope.client.attributes.AttributeGroupsLoader;
+import com.drehverschluss.gearscope.compat.accessories.AccessoriesCompat;
+import com.drehverschluss.gearscope.compat.accessorify.AccessorifyCompat;
 import com.drehverschluss.gearscope.compat.apothic.ApothicCompat;
+import com.drehverschluss.gearscope.compat.betterparty.BetterPartyCompat;
 import com.drehverschluss.gearscope.compat.polymorph.PolymorphCompat;
+import com.drehverschluss.gearscope.compat.quark.QuarkClientCompat;
+import com.drehverschluss.gearscope.compat.quark.QuarkCompat;
 import com.drehverschluss.gearscope.compat.sophisticatedbackpacks.SophisticatedBackpacksCompat;
 import com.drehverschluss.gearscope.core.GearscopeServices;
 import com.drehverschluss.gearscope.menu.GearscopeMenuTypes;
@@ -42,6 +48,15 @@ public class GearscopeClient {
         if (ModList.get().isLoaded(SophisticatedBackpacksCompat.MOD_ID)) {
             SophisticatedBackpacksCompat.initClient();
         }
+        if (ModList.get().isLoaded(BetterPartyCompat.MOD_ID)) {
+            BetterPartyCompat.initClient();
+        }
+        if (ModList.get().isLoaded(QuarkCompat.MOD_ID)) {
+            QuarkClientCompat.initClient();
+        }
+        if (ModList.get().isLoaded(AccessorifyCompat.MOD_ID) && ModList.get().isLoaded(AccessoriesCompat.MOD_ID)) {
+            AccessorifyCompat.initClient();
+        }
 
         modEventBus.addListener(GearscopeKeyMappings::register);
         modEventBus.addListener(GearscopeClient::onRegisterMenuScreens);
@@ -54,6 +69,9 @@ public class GearscopeClient {
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, GearscopeClient::onMousePressed);
         // Low priority: other listeners such as JEI's search field (which cancels the event) come first.
         NeoForge.EVENT_BUS.addListener(EventPriority.LOW, GearscopeKeyMappings::onScreenKeyPressed);
+        NeoForge.EVENT_BUS.addListener(GearscopeReturn::onScreenOpening);
+        NeoForge.EVENT_BUS.addListener(GearscopeReturn::onClientTick);
+        NeoForge.EVENT_BUS.addListener(GearscopeReturn::onLoggingOut);
     }
 
     private static void onMousePressed(ScreenEvent.MouseButtonPressed.Pre event) {

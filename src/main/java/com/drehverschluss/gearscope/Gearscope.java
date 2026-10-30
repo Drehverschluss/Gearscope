@@ -2,6 +2,7 @@ package com.drehverschluss.gearscope;
 
 import com.drehverschluss.gearscope.compat.accessories.AccessoriesCompat;
 import com.drehverschluss.gearscope.compat.inventorysorter.InventorySorterCompat;
+import com.drehverschluss.gearscope.compat.quark.QuarkCompat;
 import com.drehverschluss.gearscope.menu.GearscopeMenuOpener;
 import com.drehverschluss.gearscope.menu.GearscopeMenuTypes;
 import com.drehverschluss.gearscope.network.GearscopeNetworking;
@@ -32,6 +33,9 @@ public class Gearscope {
         }
         if (ModList.get().isLoaded(InventorySorterCompat.MOD_ID)) {
             InventorySorterCompat.init(modEventBus);
+        }
+        if (ModList.get().isLoaded(QuarkCompat.MOD_ID)) {
+            QuarkCompat.init();
         }
     }
 

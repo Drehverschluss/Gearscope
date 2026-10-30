@@ -189,6 +189,12 @@ dependencies {
     // Sophisticated Backpacks (open payload, backpack item); Core holds the item's superclasses
     compileOnly "maven.modrinth:sophisticated-backpacks:${sophisticated_backpacks_version}"
     compileOnly "maven.modrinth:sophisticated-core:${sophisticated_core_version}"
+    // Phase 9 compatibility, compiled against only:
+    // Better Party (party button), Quark + Zeta (open shulker boxes), Accessorify (open accessory shulker/ender chest)
+    compileOnly "maven.modrinth:better-party:${better_party_version}"
+    compileOnly "maven.modrinth:quark:${quark_version}"
+    compileOnly "maven.modrinth:zeta:${zeta_version}"
+    compileOnly "maven.modrinth:accessorify:${accessorify_version}"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

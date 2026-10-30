@@ -71,6 +71,8 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     private float yMouse;
     // Set after a click on a render toggle: the following drag and release belong to that click, not to a slot.
     private boolean swallowUntilRelease;
+    // Whether the player closed the screen (Esc / keys); otherwise the server or another screen replaced it.
+    private boolean closedByPlayer;
 
     public GearscopeScreen(GearscopeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -121,6 +123,16 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     public void removed() {
         super.removed();
         GuiScaleOverride.restore(this.minecraft);
+        if (!this.closedByPlayer) {
+            GearscopeReturn.gearscopeClosedBySomethingElse();
+        }
+    }
+
+    @Override
+    public void onClose() {
+        // Esc, the inventory key or the Gearscope key: the player leaves Gearscope, nothing should return to it.
+        this.closedByPlayer = true;
+        super.onClose();
     }
 
     /** The layout this screen and its menu's slot positions were built with. */
@@ -273,6 +285,7 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
             this.renderCosmeticButton(guiGraphics, mouseX, mouseY);
             this.renderTabs(guiGraphics, mouseX, mouseY);
         }
+        this.renderModButtons(guiGraphics, mouseX, mouseY);
 
         // Effect tiles above the frame (effect display TOP), drawn with the background so items stay on top.
         if (this.effectMode() == EffectDisplayMode.TOP) {
@@ -403,6 +416,34 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
         }
     }
 
+    // --- Buttons of other mods ---
+
+    /** Same look as the cosmetic button: dark fill, gold frame (lighter while hovered), icon inside. */
+    private void renderModButtons(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        List<GearscopeModButtons.ModButton> buttons = GearscopeModButtons.visible();
+        int size = this.layout.modButtonSize;
+        for (int i = 0; i < buttons.size(); i++) {
+            int x = this.leftPos + this.layout.modButtonsX + i * this.layout.modButtonStep;
+            int y = this.topPos + this.layout.modButtonsY;
+            boolean hovered = mouseX >= x && mouseX < x + size && mouseY >= y && mouseY < y + size;
+            guiGraphics.fill(x, y, x + size, y + size, hovered ? GearscopeStyle.COSMETIC_ACTIVE_FILL : GearscopeStyle.COSMETIC_FILL);
+            guiGraphics.renderOutline(x, y, size, size, hovered ? GearscopeStyle.ARROW_HOVER : GearscopeStyle.COSMETIC_BORDER);
+            buttons.get(i).renderIcon(guiGraphics, x + 1, y + 1, size - 2);
+        }
+    }
+
+    @Nullable
+    private GearscopeModButtons.ModButton modButtonAt(int mouseX, int mouseY) {
+        List<GearscopeModButtons.ModButton> buttons = GearscopeModButtons.visible();
+        int size = this.layout.modButtonSize;
+        for (int i = 0; i < buttons.size(); i++) {
+            if (this.isOver(mouseX, mouseY, this.layout.modButtonsX + i * this.layout.modButtonStep, this.layout.modButtonsY, size, size)) {
+                return buttons.get(i);
+            }
+        }
+        return null;
+    }
+
     private void renderCosmeticButton(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         int x = this.leftPos + this.layout.cosmeticButtonX;
         int y = this.topPos + this.layout.cosmeticButtonY;
@@ -471,6 +512,11 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
 
     private void renderWidgetTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         if (!this.menu.getCarried().isEmpty()) {
+            return;
+        }
+        GearscopeModButtons.ModButton modButton = this.modButtonAt(mouseX, mouseY);
+        if (modButton != null) {
+            guiGraphics.renderTooltip(this.font, modButton.tooltip(), mouseX, mouseY);
             return;
         }
         if (this.hoveredSlot instanceof ToggleableSlot toggleable && !this.hoveredSlot.hasItem()) {
@@ -553,6 +599,12 @@ public class GearscopeScreen extends AbstractContainerScreen<GearscopeMenu> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.clickRenderToggle(mouseX, mouseY, button)) {
+            return true;
+        }
+        GearscopeModButtons.ModButton modButton = button == 0 ? this.modButtonAt((int) mouseX, (int) mouseY) : null;
+        if (modButton != null) {
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            modButton.onClick(this);
             return true;
         }
         if (button == 0 && this.hasAccessories && this.handleWidgetClick((int) mouseX, (int) mouseY)) {

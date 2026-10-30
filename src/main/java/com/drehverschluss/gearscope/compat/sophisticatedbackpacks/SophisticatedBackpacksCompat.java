@@ -1,18 +1,14 @@
 package com.drehverschluss.gearscope.compat.sophisticatedbackpacks;
 
+import com.drehverschluss.gearscope.client.GearscopeReturn;
 import com.drehverschluss.gearscope.client.GearscopeScreen;
 import com.drehverschluss.gearscope.menu.GearscopeMenu;
-import com.drehverschluss.gearscope.network.OpenGearscopePayload;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.Optional;
-import javax.annotation.Nullable;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -37,18 +33,14 @@ public final class SophisticatedBackpacksCompat {
     public static final String MOD_ID = "sophisticatedbackpacks";
     private static final String ACCESSORIES_HANDLER = "accessories";
 
-    // Set while an SB screen opened from Gearscope (directly or through SB sub screens) is shown.
-    private static boolean returnToGearscope;
-
     private SophisticatedBackpacksCompat() {
     }
 
     public static void initClient() {
         NeoForge.EVENT_BUS.addListener(SophisticatedBackpacksCompat::onMouseButtonPressed);
         NeoForge.EVENT_BUS.addListener(SophisticatedBackpacksCompat::onKeyPressed);
-        NeoForge.EVENT_BUS.addListener(SophisticatedBackpacksCompat::onScreenOpening);
-        NeoForge.EVENT_BUS.addListener(SophisticatedBackpacksCompat::onClientTick);
-        NeoForge.EVENT_BUS.addListener(SophisticatedBackpacksCompat::onLoggingOut);
+        // All SB screens (backpack, settings, nested backpacks) count as one family for the return to Gearscope.
+        GearscopeReturn.registerChildScreens(SophisticatedBackpacksCompat::isSbScreen);
     }
 
     // --- Opening a backpack from Gearscope ---
@@ -123,33 +115,8 @@ public final class SophisticatedBackpacksCompat {
 
     // --- Returning to Gearscope ---
 
-    private static void onScreenOpening(ScreenEvent.Opening event) {
-        boolean fromGearscopeOrSb = event.getCurrentScreen() instanceof GearscopeScreen || returnToGearscope;
-        returnToGearscope = fromGearscopeOrSb && isSbScreen(event.getNewScreen());
-    }
-
-    private static boolean isSbScreen(@Nullable Screen screen) {
+    private static boolean isSbScreen(Screen screen) {
         return screen instanceof AbstractContainerScreen<?> containerScreen
                 && containerScreen.getMenu() instanceof IContextAwareContainer;
-    }
-
-    private static void onClientTick(ClientTickEvent.Post event) {
-        if (!returnToGearscope) {
-            return;
-        }
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null) {
-            returnToGearscope = false;
-        } else if (minecraft.screen == null) {
-            // The backpack screen was closed (ESC, inventory key, or the server closed it).
-            returnToGearscope = false;
-            PacketDistributor.sendToServer(new OpenGearscopePayload());
-        } else if (!isSbScreen(minecraft.screen)) {
-            returnToGearscope = false;
-        }
-    }
-
-    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        returnToGearscope = false;
     }
 }

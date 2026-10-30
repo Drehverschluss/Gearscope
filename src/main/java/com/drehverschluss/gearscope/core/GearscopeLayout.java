@@ -71,6 +71,12 @@ public final class GearscopeLayout {
         public int recipeButtonY = 215;
         public int recipeButtonSize = 12;
 
+        // Buttons of other mods (e.g. Better Party), in a row to the right of the cosmetic button.
+        public int modButtonsX = 78;
+        public int modButtonsY = 20;
+        public int modButtonSize = 12;
+        public int modButtonStep = 14;
+
         // Player figure: horizontal center, where its feet stand, render scale and the clipping box around it.
         public int playerCenterX = 151;
         public int playerFeetY = 126;
@@ -191,6 +197,10 @@ public final class GearscopeLayout {
     public final int recipeButtonX;
     public final int recipeButtonY;
     public final int recipeButtonSize;
+    public final int modButtonsX;
+    public final int modButtonsY;
+    public final int modButtonSize;
+    public final int modButtonStep;
     public final int playerCenterX;
     public final int playerFeetY;
     public final int playerScale;
@@ -273,6 +283,10 @@ public final class GearscopeLayout {
         this.recipeButtonX = b.recipeButtonX;
         this.recipeButtonY = b.recipeButtonY;
         this.recipeButtonSize = b.recipeButtonSize;
+        this.modButtonsX = b.modButtonsX;
+        this.modButtonsY = b.modButtonsY;
+        this.modButtonSize = b.modButtonSize;
+        this.modButtonStep = b.modButtonStep;
         this.playerCenterX = b.playerCenterX;
         this.playerFeetY = b.playerFeetY;
         this.playerScale = b.playerScale;
